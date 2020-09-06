@@ -1,0 +1,6 @@
+name: RandomTeleport
+version: 0.0.1
+author: BlitzGamer_88
+main: me.blitzgamer_88.randomteleport.RandomTeleport
+api-version: 1.13
+softdepend: [PlaceholderAPI, WorldGuard]
