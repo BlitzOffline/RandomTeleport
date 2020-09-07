@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 
+@Suppress("TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING")
 @Command("randomteleport")
 @Alias("rtp", "wild")
 class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase() {
@@ -20,28 +21,32 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
     @Default
     fun randomTeleport(sender: CommandSender, @Completion("#players") @Optional target: Player?){
 
-
-        val targetNotSpecified = mainClass.conf().getProperty(Config.targetNotSpecified).color()
-        val noPermission = mainClass.conf().getProperty(Config.noPermission).color()
-
         val enabledWorlds = mainClass.conf().getProperty(Config.enabledWorlds)
 
         val useBorder = mainClass.conf().getProperty(Config.useBorder)
         val useWorldGuard = mainClass.conf().getProperty(Config.useWorldGuard)
 //    val debug = mainClass.conf().getProperty(Config.debug)
 
+        val coolDown = mainClass.conf().getProperty(Config.coolDown)
+        val useCoolDownWhenTeleportedByOthers = mainClass.conf().getProperty(Config.useCoolDownWhenTeleportedByOthers)
+
         val maxX = mainClass.conf().getProperty(Config.maxX)
         val maxZ = mainClass.conf().getProperty(Config.maxZ)
 
         val maxAttempts = mainClass.conf().getProperty(Config.maxAttempts)
 
-        val rtpPermissionSelf = mainClass.conf().getProperty(Config.rtpPermissionSelf).color()
-        val rtpPermissionOther = mainClass.conf().getProperty(Config.rtpPermissionOthers).color()
-        val noLocationFound = mainClass.conf().getProperty(Config.noLocationFound).color()
-        val noWorldFound = mainClass.conf().getProperty(Config.noWorldFound).color()
+        val rtpPermissionSelf = mainClass.conf().getProperty(Config.rtpPermissionSelf)
+        val rtpPermissionOther = mainClass.conf().getProperty(Config.rtpPermissionOthers)
+        val rtpCoolDownBypassPermission = mainClass.conf().getProperty(Config.rtpCoolDownBypassPermission)
 
         val successfullyTeleported = mainClass.conf().getProperty(Config.successfullyTeleported).color()
         val successfullyTeleportedOther = mainClass.conf().getProperty(Config.successfullyTeleportedOther).color()
+        val noLocationFound = mainClass.conf().getProperty(Config.noLocationFound).color()
+        val noWorldFound = mainClass.conf().getProperty(Config.noWorldFound).color()
+        val coolDownRemaining = mainClass.conf().getProperty(Config.coolDownRemaining).color()
+        val coolDownRemainingTarget = mainClass.conf().getProperty(Config.coolDownRemainingTarget).color()
+        val targetNotSpecified = mainClass.conf().getProperty(Config.targetNotSpecified).color()
+        val noPermission = mainClass.conf().getProperty(Config.noPermission).color()
 
 
 
@@ -56,6 +61,18 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
             if (!sender.hasPermission(rtpPermissionSelf)) {
                 sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, noPermission))
                 return
+            }
+
+            if (coolDown != 0 && !sender.hasPermission(rtpCoolDownBypassPermission)) {
+                val time = System.currentTimeMillis()
+                val newCoolDown = coolDown*1000.toLong()
+                val lastCoolDown = mainClass.getCoolDownsConfig()?.get("${sender.uniqueId}").toString().toLongOrNull()
+                if (lastCoolDown != null && time-newCoolDown < lastCoolDown) {
+                    val coolDownLeft = coolDown - ((time-lastCoolDown)/1000)
+                    val newStringCoolDownRemaining = coolDownRemaining.replace("%cooldown%", coolDownLeft.toString())
+                    sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, newStringCoolDownRemaining))
+                    return
+                }
             }
 
             if (!enabledWorlds.contains("all") && enabledWorlds != null) {
@@ -106,7 +123,12 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
                     return
                 }
 
+
+
                 PaperLib.teleportAsync(sender, randomLocation)
+                if (coolDown != 0) {
+                    mainClass.getCoolDownsConfig()?.set("${sender.uniqueId}", System.currentTimeMillis())
+                }
                 sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, successfullyTeleported))
                 return
 
@@ -138,6 +160,9 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
 
 
             PaperLib.teleportAsync(sender, randomLocation)
+            if (coolDown != 0) {
+                mainClass.getCoolDownsConfig()?.set("${sender.uniqueId}", System.currentTimeMillis())
+            }
             sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, successfullyTeleported))
             return
 
@@ -148,6 +173,18 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
         if (sender is Player && !sender.hasPermission(rtpPermissionOther)) {
             sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, noPermission))
             return
+        }
+
+        if (coolDown != 0 && useCoolDownWhenTeleportedByOthers && !target.hasPermission(rtpCoolDownBypassPermission)) {
+            val time = System.currentTimeMillis()
+            val newCoolDown = coolDown*1000.toLong()
+            val lastCoolDown = mainClass.getCoolDownsConfig()?.get("${target.uniqueId}").toString().toLongOrNull()
+            if (lastCoolDown != null && time-newCoolDown < lastCoolDown) {
+                val coolDownLeft = coolDown - ((time-lastCoolDown)/1000)
+                val newStringCoolDownRemainingTarget = coolDownRemainingTarget.replace("%cooldown%", coolDownLeft.toString())
+                sender.sendMessage(PlaceholderAPI.setPlaceholders(target, newStringCoolDownRemainingTarget))
+                return
+            }
         }
 
         if (!enabledWorlds.contains("all") && enabledWorlds != null) {
@@ -199,6 +236,9 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
             }
 
             PaperLib.teleportAsync(target, randomLocation)
+            if (coolDown != 0 && useCoolDownWhenTeleportedByOthers) {
+                mainClass.getCoolDownsConfig()?.set("${target.uniqueId}", System.currentTimeMillis())
+            }
             target.sendMessage(PlaceholderAPI.setPlaceholders(target, successfullyTeleported))
             sender.sendMessage(PlaceholderAPI.setPlaceholders(target, successfullyTeleportedOther))
             return
@@ -230,6 +270,9 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
         }
 
         PaperLib.teleportAsync(target, randomLocation)
+        if (coolDown != 0 && useCoolDownWhenTeleportedByOthers) {
+            mainClass.getCoolDownsConfig()?.set("${target.uniqueId}", System.currentTimeMillis())
+        }
         target.sendMessage(PlaceholderAPI.setPlaceholders(target, successfullyTeleported))
         sender.sendMessage(PlaceholderAPI.setPlaceholders(target, successfullyTeleportedOther))
         return
@@ -242,29 +285,34 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
     fun randomTeleportWorld(sender: CommandSender, @Completion("#worlds") worldName: String, @Completion("#players") @Optional target: Player?){
 
 
-        val targetNotSpecified = mainClass.conf().getProperty(Config.targetNotSpecified).color()
-        val noPermission = mainClass.conf().getProperty(Config.noPermission).color()
-
         val useBorder = mainClass.conf().getProperty(Config.useBorder)
         val useWorldGuard = mainClass.conf().getProperty(Config.useWorldGuard)
 //    val debug = mainClass.conf().getProperty(Config.debug)
+
+        val coolDown = mainClass.conf().getProperty(Config.coolDown)
+        val useCoolDownWhenTeleportedByOthers = mainClass.conf().getProperty(Config.useCoolDownWhenTeleportedByOthers)
 
         val maxX = mainClass.conf().getProperty(Config.maxX)
         val maxZ = mainClass.conf().getProperty(Config.maxZ)
 
         val maxAttempts = mainClass.conf().getProperty(Config.maxAttempts)
 
-        val rtpWorldPermissionSelf = mainClass.conf().getProperty(Config.rtpWorldPermissionSelf).color()
-        val rtpWorldPermissionOther = mainClass.conf().getProperty(Config.rtpWorldPermissionOthers).color()
+        val rtpWorldPermissionSelf = mainClass.conf().getProperty(Config.rtpWorldPermissionSelf)
+        val rtpWorldPermissionOther = mainClass.conf().getProperty(Config.rtpWorldPermissionOthers)
+        val rtpCoolDownBypassPermission = mainClass.conf().getProperty(Config.rtpCoolDownBypassPermission)
 
         val wrongWorldName = mainClass.conf().getProperty(Config.wrongWorldName).color()
         val noLocationFound = mainClass.conf().getProperty(Config.noLocationFound).color()
-
         val successfullyTeleported = mainClass.conf().getProperty(Config.successfullyTeleported).color()
         val successfullyTeleportedOther = mainClass.conf().getProperty(Config.successfullyTeleportedOther).color()
+        val targetNotSpecified = mainClass.conf().getProperty(Config.targetNotSpecified).color()
+        val noPermission = mainClass.conf().getProperty(Config.noPermission).color()
+        val coolDownRemaining = mainClass.conf().getProperty(Config.coolDownRemaining).color()
+        val coolDownRemainingTarget = mainClass.conf().getProperty(Config.coolDownRemainingTarget).color()
 
 
         val teleportWorld = Bukkit.getWorld(worldName)
+        val perWorldPermission = "rtp.world.$worldName"
 
         if (teleportWorld == null) {
             sender.sendMessage(wrongWorldName)
@@ -278,9 +326,21 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
                 return
             }
 
-            if (!sender.hasPermission(rtpWorldPermissionSelf)) {
+            if (!sender.hasPermission(rtpWorldPermissionSelf) && !sender.hasPermission(perWorldPermission)) {
                 sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, noPermission))
                 return
+            }
+
+            if (coolDown != 0 && !sender.hasPermission(rtpCoolDownBypassPermission)) {
+                val time = System.currentTimeMillis()
+                val newCoolDown = coolDown*1000.toLong()
+                val lastCoolDown = mainClass.getCoolDownsConfig()?.get("${sender.uniqueId}").toString().toLongOrNull()
+                if (lastCoolDown != null && time-newCoolDown < lastCoolDown) {
+                    val coolDownLeft = coolDown - ((time-lastCoolDown)/1000)
+                    val newStringCoolDownRemaining = coolDownRemaining.replace("%cooldown%", coolDownLeft.toString())
+                    sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, newStringCoolDownRemaining))
+                    return
+                }
             }
 
             lateinit var randomLocation: Location
@@ -304,6 +364,9 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
             }
 
             PaperLib.teleportAsync(sender, randomLocation)
+            if (coolDown != 0) {
+                mainClass.getCoolDownsConfig()?.set("${sender.uniqueId}", System.currentTimeMillis())
+            }
             sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, successfullyTeleported))
             return
 
@@ -314,6 +377,18 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
         if (sender is Player && !sender.hasPermission(rtpWorldPermissionOther)) {
             sender.sendMessage(PlaceholderAPI.setPlaceholders(sender, noPermission))
             return
+        }
+
+        if (coolDown != 0 && useCoolDownWhenTeleportedByOthers && !target.hasPermission(rtpCoolDownBypassPermission)) {
+            val time = System.currentTimeMillis()
+            val newCoolDown = coolDown*1000.toLong()
+            val lastCoolDown = mainClass.getCoolDownsConfig()?.get("${target.uniqueId}").toString().toLongOrNull()
+            if (lastCoolDown != null && time-newCoolDown < lastCoolDown) {
+                val coolDownLeft = coolDown - ((time-lastCoolDown)/1000)
+                val newStringCoolDownRemainingTarget = coolDownRemainingTarget.replace("%cooldown%", coolDownLeft.toString())
+                sender.sendMessage(PlaceholderAPI.setPlaceholders(target, newStringCoolDownRemainingTarget))
+                return
+            }
         }
 
         lateinit var randomLocation: Location
@@ -337,6 +412,9 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
         }
 
         PaperLib.teleportAsync(target, randomLocation)
+        if (coolDown != 0 && useCoolDownWhenTeleportedByOthers) {
+            mainClass.getCoolDownsConfig()?.set("${target.uniqueId}", System.currentTimeMillis())
+        }
         target.sendMessage(PlaceholderAPI.setPlaceholders(target, successfullyTeleported))
         sender.sendMessage(PlaceholderAPI.setPlaceholders(target, successfullyTeleportedOther))
         return
@@ -354,6 +432,7 @@ class CommandRandomTeleport(private val mainClass: RandomTeleport) : CommandBase
             return
         }
         mainClass.conf().reload()
+        mainClass.reloadCoolDownsConfig()
         sender.sendMessage(configReload.color())
     }
 

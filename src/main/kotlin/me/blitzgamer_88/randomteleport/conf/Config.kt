@@ -29,6 +29,13 @@ internal object Config : SettingsHolder {
 
 
     @JvmField
+    @Comment("Specify how long the cooldown for the rtp command should be.", "Leave it to '0' if you want the cooldown to be disabled.")
+    val coolDown: Property<Int> = PropertyInitializer.newProperty("coolDown", 0)
+    @JvmField
+    @Comment("If you set this to true, the cooldown will be updated when a player is teleported by another player/console/plugin/etc. and also checked unless they have the bypass permission.")
+    val useCoolDownWhenTeleportedByOthers: Property<Boolean> = PropertyInitializer.newProperty("useCoolDownWhenTeleportedByOthers", false)
+
+    @JvmField
     @Comment(" ", "These worlds will be used when using '/rtp <player>'.", "You can use the word 'all' and the plugin will use all worlds.")
     val enabledWorlds: Property<MutableList<String>> = PropertyBuilder.ListPropertyBuilder(PrimitivePropertyType.STRING)
         .path("enabled_worlds")
@@ -48,6 +55,9 @@ internal object Config : SettingsHolder {
     @Comment("This permission will be used for a player to use the '/rtp world' command on other players.")
     @JvmField
     val rtpWorldPermissionOthers: Property<String> = PropertyInitializer.newProperty("rtpWorldPermissionOthers", "rtp.world.others")
+    @JvmField
+    @Comment("When a player has this permission, he will bypass the cooldown.")
+    val rtpCoolDownBypassPermission: Property<String> = PropertyInitializer.newProperty("rtpCoolDownBypassPermission", "rtp.cooldown.bypass")
 
 //    @JvmField
 //    @Comment("", "Enable debug mode")
@@ -70,4 +80,9 @@ internal object Config : SettingsHolder {
     val noWorldFound: Property<String> = PropertyInitializer.newProperty("noWorldFound", "&cAll worlds listed in config.yml are wrong.")
     @JvmField
     val configReload: Property<String> = PropertyInitializer.newProperty("configReload", "&cConfiguration reloaded.")
+    @JvmField
+    @Comment("This and 'coolDownRemainingTarget' are the only places where you can use the internal placeholder: '%cooldown%'", "This placeholder shows how many seconds of the cooldown a player has left.")
+    val coolDownRemaining: Property<String> = PropertyInitializer.newProperty("coolDownRemaining", "&cYou still have %cooldown% seconds remaining until you can use this again.")
+    @JvmField
+    val coolDownRemainingTarget: Property<String> = PropertyInitializer.newProperty("coolDownRemainingTarget", "%player_name% has %cooldown% seconds of cooldown left.")
 }
