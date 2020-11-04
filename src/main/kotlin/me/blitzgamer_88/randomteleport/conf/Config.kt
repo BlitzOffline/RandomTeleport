@@ -11,15 +11,15 @@ import ch.jalu.configme.properties.types.PrimitivePropertyType
 internal object Config : SettingsHolder {
 
     @JvmField
-    @Comment("This is how many times the plugins checks for a safe location before stopping.")
+    @Comment("This is how many times the plugins checks for a safe location before stopping.", "Keep it around 10 or lower for best performance.")
     val maxAttempts: Property<Int> = PropertyInitializer.newProperty("maxAttempts", 10)
 
     @JvmField
-    @Comment(" ", "If this is enabled, the plugin will check so the teleport location is not in a world guard region")
+    @Comment("If this is enabled, the plugin will check so the teleport location is not in a WorldGuard region")
     val useWorldGuard: Property<Boolean> = PropertyInitializer.newProperty("useWorldGuard", true)
 
     @JvmField
-    @Comment(" ", "If the plugins uses the world border as a max y and z")
+    @Comment("Enable this if you want the plugin to use world borders as a max x and z")
     val useBorder: Property<Boolean> = PropertyInitializer.newProperty("useBorder", true)
     @JvmField
     @Comment("These values are used if useBorder is set to false")
@@ -36,15 +36,19 @@ internal object Config : SettingsHolder {
     val useCoolDownWhenTeleportedByOthers: Property<Boolean> = PropertyInitializer.newProperty("useCoolDownWhenTeleportedByOthers", false)
 
     @JvmField
-    @Comment(" ", "These worlds will be used when using '/rtp <player>'.", "You can use the word 'all' and the plugin will use all worlds.")
+    @Comment("These worlds will be used when using '/rtp <player>'.", "You can use the word 'all' and the plugin will use all worlds.")
     val enabledWorlds: Property<MutableList<String>> = PropertyBuilder.ListPropertyBuilder(PrimitivePropertyType.STRING)
         .path("enabled_worlds")
         .defaultValue(listOf("world", "world_nether", "all"))
         .build()
 
+    @JvmField
+    @Comment("If you enable this, messages will be sent to console debugging stuff like why a player cannot teleport to a location.", "This is meant more to check if the plugin works as intended.")
+    val debug: Property<Boolean> = PropertyInitializer.newProperty("debug", false)
+
 
     @JvmField
-    @Comment(" ", "This permission will be used for a player to use the '/rtp' command on themselves.")
+    @Comment("This permission will be used for a player to use the '/rtp' command on themselves.")
     val rtpPermissionSelf: Property<String> = PropertyInitializer.newProperty("rtpPermissionSelf", "rtp.self")
     @JvmField
     @Comment("This permission will be used for a player to use the '/rtp' command on other players.")
@@ -59,12 +63,9 @@ internal object Config : SettingsHolder {
     @Comment("When a player has this permission, he will bypass the cooldown.")
     val rtpCoolDownBypassPermission: Property<String> = PropertyInitializer.newProperty("rtpCoolDownBypassPermission", "rtp.cooldown.bypass")
 
-//    @JvmField
-//    @Comment("", "Enable debug mode")
-//    val debug: Property<Boolean> = PropertyInitializer.newProperty("debug", false)
 
     @JvmField
-    @Comment(" ", "Customize the messages that are sent by the plugin:")
+    @Comment("Customize the messages that are sent by the plugin:")
     val targetNotSpecified: Property<String> = PropertyInitializer.newProperty("targetNotSpecified", "&cYou need to specify a target!")
     @JvmField
     val noPermission: Property<String> = PropertyInitializer.newProperty("noPermission", "&cYou don't have permission to do that.")

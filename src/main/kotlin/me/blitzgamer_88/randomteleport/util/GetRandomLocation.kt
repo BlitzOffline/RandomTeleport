@@ -5,7 +5,6 @@ import org.bukkit.World
 
 fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int?, maxZ: Int?) : Location {
 
-
     var maxValue: Int? = null
 
     if (useBorder) {
@@ -18,12 +17,13 @@ fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int?, maxZ: Int?) 
     if (maxValue == null) {
         randomX = (-maxX!!..maxX).random()
         randomZ = (-maxZ!!..maxZ).random()
-    }else {
-        randomX = (-maxValue..maxValue).random()
-        randomZ = (-maxValue..maxValue).random()
+        val randomY = world.getHighestBlockYAt(randomX, randomZ)+1
+        return Location(world, randomX.toDouble(), randomY.toDouble(), randomZ.toDouble())
     }
 
-    val randomY = world.getHighestBlockYAt(randomX, randomZ)+1
+    randomX = (-maxValue..maxValue).random()
+    randomZ = (-maxValue..maxValue).random()
 
+    val randomY = world.getHighestBlockYAt(randomX, randomZ)+1
     return Location(world, randomX.toDouble(), randomY.toDouble(), randomZ.toDouble())
 }

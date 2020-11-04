@@ -1,10 +1,11 @@
 package me.blitzgamer_88.randomteleport
 
-import ch.jalu.configme.SettingsManager
-import io.papermc.lib.PaperLib
 import me.blitzgamer_88.randomteleport.cmd.CommandRandomTeleport
-import me.blitzgamer_88.randomteleport.conf.RandomTeleportConfiguration
+import me.blitzgamer_88.randomteleport.conf.Config
 import me.blitzgamer_88.randomteleport.placeholders.RandomTeleportPlaceholders
+import me.blitzgamer_88.randomteleport.util.conf
+import me.blitzgamer_88.randomteleport.util.loadConfig
+import me.blitzgamer_88.randomteleport.util.log
 import me.bristermitten.pdm.PDMBuilder
 import me.mattstudios.mf.base.CommandManager
 import org.bukkit.Bukkit
@@ -20,25 +21,36 @@ import java.util.logging.Level
 
 class RandomTeleport : JavaPlugin() {
 
-    // CONFIG.YML
+    override fun onEnable() {
 
-    private var conf = null as? SettingsManager?
+        PDMBuilder(this).build().loadAllDependencies().join()
 
-    private fun loadConfig() {
-        val file = this.dataFolder.resolve("config.yml")
+        this.saveDefaultConfig()
+        loadConfig(this)
 
-        if (!file.exists())
-        {
-            file.parentFile.mkdirs()
-            file.createNewFile()
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            "&cCould not find PlaceholderAPI! This plugin is required.".log()
+            Bukkit.getPluginManager().disablePlugin(this)
         }
+        else { "&aHooked into PlaceholderAPI.".log() }
 
-        this.conf = RandomTeleportConfiguration(file)
+        val hookWorldGuard = conf().getProperty(Config.useWorldGuard)
+        if (hookWorldGuard && Bukkit.getPluginManager().getPlugin("WorldGuard") == null) "&cCould not hook into WorldGuard. Plugin not found.".log()
+        else if (hookWorldGuard) "&aHooked into WorldGuard".log()
+
+        val papi = RandomTeleportPlaceholders(this)
+        papi.register()
+
+        val cmdManager = CommandManager(this, true)
+        cmdManager.completionHandler.register("#worlds") { Bukkit.getWorlds().map(World::getName) }
+        cmdManager.register(CommandRandomTeleport(this))
+
+        "&a[RandomTeleport] Plugin enabled!".log()
     }
 
-    fun conf(): SettingsManager
-    {
-        return checkNotNull(conf)
+
+    override fun onDisable() {
+        "&c[RandomTeleport] Plugin disabled!".log()
     }
 
 
@@ -48,71 +60,19 @@ class RandomTeleport : JavaPlugin() {
     private var coolDownsFile: File? = null
 
     fun reloadCoolDownsConfig() {
-        if (coolDownsFile == null) {
-            coolDownsFile = File(dataFolder, "cooldowns.yml")
-        }
+        if (coolDownsFile == null) coolDownsFile = File(dataFolder, "cooldowns.yml")
         coolDowns = YamlConfiguration.loadConfiguration(coolDownsFile!!)
-
-        // Look for defaults in the jar
-        val defConfigStream: Reader? = getResource("cooldowns.yml")?.reader()
-        if (defConfigStream != null){
-            val defConfig = YamlConfiguration.loadConfiguration(defConfigStream)
-            (coolDowns as YamlConfiguration).setDefaults(defConfig)
-        }
     }
 
     fun saveCoolDownsConfig() {
-        if (coolDowns == null || coolDownsFile == null) {
-            return
-        }
-        try {
-            getCoolDownsConfig()!!.save(coolDownsFile!!)
-        } catch (ex: IOException) {
-            logger.log(Level.SEVERE, "Could not save cooldowns to $coolDownsFile", ex)
-        }
+        if (coolDowns == null || coolDownsFile == null) return
+        try { getCoolDownsConfig()!!.save(coolDownsFile!!) }
+        catch (ex: IOException) { logger.log(Level.SEVERE, "Could not save cooldowns to $coolDownsFile", ex) }
     }
 
     fun getCoolDownsConfig(): FileConfiguration? {
-        if (coolDowns == null) {
-            reloadCoolDownsConfig()
-        }
+        if (coolDowns == null) reloadCoolDownsConfig()
         return coolDowns
-    }
-
-
-    // PLUGIN ENABLE
-
-    override fun onEnable() {
-
-        PDMBuilder(this).build().loadAllDependencies().join()
-
-        loadConfig()
-
-
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
-
-            logger.warning("Could not find PlaceholderAPI! This plugin is required")
-            Bukkit.getPluginManager().disablePlugin(this)
-
-        }
-
-        val papi = RandomTeleportPlaceholders(this)
-        papi.register()
-
-        val cmdManager = CommandManager(this, true)
-        cmdManager.completionHandler.register("#worlds") { Bukkit.getWorlds().map(World::getName) }
-        cmdManager.register(CommandRandomTeleport(this))
-
-        logger.info("Plugin enabled!")
-    }
-
-
-    // PLUGIN DISABLE
-
-    override fun onDisable() {
-
-        logger.info("Plugin disabled!")
-
     }
 
 }

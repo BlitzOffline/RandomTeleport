@@ -2,6 +2,7 @@ package me.blitzgamer_88.randomteleport.placeholders
 
 import me.blitzgamer_88.randomteleport.RandomTeleport
 import me.blitzgamer_88.randomteleport.conf.Config
+import me.blitzgamer_88.randomteleport.util.conf
 import me.clip.placeholderapi.PlaceholderAPIPlugin
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
@@ -16,7 +17,7 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
     }
 
     override fun getVersion(): String {
-        return "0.0.3"
+        return "0.0.4"
     }
 
     override fun getIdentifier(): String {
@@ -42,14 +43,14 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
                         return null
                     }
                     if (args[1] == "enabled") {
-                        val coolDown = mainClass.conf().getProperty(Config.coolDown)
+                        val coolDown = conf().getProperty(Config.coolDown)
                         if (coolDown == 0) {
                             return formatBoolean(false)
                         }
                         return formatBoolean(true)
                     }
                     if (args[1] == "left") {
-                        val coolDown = mainClass.conf().getProperty(Config.coolDown)
+                        val coolDown = conf().getProperty(Config.coolDown)
                         if (coolDown == 0) {
                             return "0"
                         }
@@ -66,7 +67,7 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
             }
 
             input == "enabled_worlds" -> {
-                val enabledWorlds = mainClass.conf().getProperty(Config.enabledWorlds)
+                val enabledWorlds = conf().getProperty(Config.enabledWorlds)
                 if (enabledWorlds == null || enabledWorlds.contains("all")){
                     return Bukkit.getWorlds().map(World::getName).toString().replace("[", "").replace("]", "")
                 }

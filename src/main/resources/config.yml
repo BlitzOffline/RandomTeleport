@@ -1,0 +1,55 @@
+# This is how many times the plugins checks for a safe location before stopping.
+# Keep it around 10 or lower for best performance.
+maxAttempts: 10
+
+# If this is enabled, the plugin will check so the teleport location is not in a WorldGuard region
+useWorldGuard: true
+
+# Enable this if you want the plugin to use world borders as a max x and z
+useBorder: true
+# These values are used if useBorder is set to false
+maxX: 150
+maxZ: 150
+
+# Specify how long the cooldown for the rtp command should be.
+# Leave it to '0' if you want the cooldown to be disabled.
+coolDown: 0
+
+# If you set this to true, the cooldown will be updated when a player is teleported by another player/console/plugin/etc. and also checked unless they have the bypass permission.
+useCoolDownWhenTeleportedByOthers: false
+
+# These worlds will be used when using '/rtp <player>'.
+# You can use the word 'all' and the plugin will use all worlds.
+enabled_worlds:
+  - world
+  - world_nether
+  - all
+
+# If you enable this, messages will be sent to console debugging stuff like why a player cannot teleport to a location.
+# This is meant more to check if the plugin works as intended.
+debug: false
+
+# This permission will be used for a player to use the '/rtp' command on themselves.
+rtpPermissionSelf: rtp.self
+# This permission will be used for a player to use the '/rtp' command on other players.
+rtpPermissionOthers: rtp.others
+# This permission will be used for a player to use the '/rtp world' command on themselves.
+rtpWorldPermissionSelf: rtp.world
+# This permission will be used for a player to use the '/rtp world' command on other players.
+rtpWorldPermissionOthers: rtp.world.others
+# When a player has this permission, he will bypass the cooldown.
+rtpCoolDownBypassPermission: rtp.cooldown.bypass
+
+# Customize the messages that are sent by the plugin:
+targetNotSpecified: '&cYou need to specify a target!'
+noPermission: '&cYou don''t have permission to do that.'
+wrongWorldName: '&cThe world you specified does not exist.'
+successfullyTeleported: '&aYou have been randomly teleported.'
+successfullyTeleportedOther: '&aYou have successfully teleported %player_name%.'
+noLocationFound: '&cCould not find a safe location. Try again.'
+noWorldFound: '&cAll worlds listed in config.yml are wrong.'
+configReload: '&cConfiguration reloaded.'
+# This and 'coolDownRemainingTarget' are the only places where you can use the internal placeholder: '%cooldown%'
+# This placeholder shows how many seconds of the cooldown a player has left.
+coolDownRemaining: '&cYou still have %cooldown% seconds remaining until you can use this again.'
+coolDownRemainingTarget: '%player_name% has %cooldown% seconds of cooldown left.'
