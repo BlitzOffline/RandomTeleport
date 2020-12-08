@@ -1,14 +1,13 @@
 package me.blitzgamer_88.randomteleport.placeholders
 
 import me.blitzgamer_88.randomteleport.RandomTeleport
-import me.blitzgamer_88.randomteleport.conf.Config
-import me.blitzgamer_88.randomteleport.util.conf
+import me.blitzgamer_88.randomteleport.util.cooldown
+import me.blitzgamer_88.randomteleport.util.enabledWorlds
 import me.clip.placeholderapi.PlaceholderAPIPlugin
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
-
 
 class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : PlaceholderExpansion() {
 
@@ -17,7 +16,7 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
     }
 
     override fun getVersion(): String {
-        return "0.0.4"
+        return "0.4"
     }
 
     override fun getIdentifier(): String {
@@ -29,7 +28,7 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
         return true
     }
 
-    private fun formatBoolean(b: Boolean): String? {
+    private fun formatBoolean(b: Boolean): String {
         return if (b) PlaceholderAPIPlugin.booleanTrue() else PlaceholderAPIPlugin.booleanFalse()
     }
 
@@ -37,38 +36,30 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
         when {
             input.startsWith("cooldown") -> {
 
-                if (input.contains('_')) {
-                    val args = input.split('_')
-                    if (args.size > 2) {
-                        return null
+                if (!input.contains('_')) return null
+
+                val args = input.split('_')
+                if (args.size > 2) return null
+
+                if (args[1] == "enabled") return if (cooldown > 0) formatBoolean(true) else formatBoolean(false)
+
+                if (args[1] == "left") {
+                    if (cooldown == 0) return "0"
+
+                    val currentTime = System.currentTimeMillis()
+                    val newCoolDown = cooldown*1000.toLong()
+                    val savedCoolDown = mainClass.coolDowns[player.uniqueId]
+
+                    if (savedCoolDown != null && currentTime-newCoolDown < savedCoolDown) {
+                        val coolDownLeft = cooldown - ((currentTime - savedCoolDown) / 1000)
+                        return coolDownLeft.toString()
                     }
-                    if (args[1] == "enabled") {
-                        val coolDown = conf().getProperty(Config.coolDown)
-                        if (coolDown == 0) {
-                            return formatBoolean(false)
-                        }
-                        return formatBoolean(true)
-                    }
-                    if (args[1] == "left") {
-                        val coolDown = conf().getProperty(Config.coolDown)
-                        if (coolDown == 0) {
-                            return "0"
-                        }
-                        val time = System.currentTimeMillis()
-                        val newCoolDown = coolDown*1000.toLong()
-                        val savedCoolDown = mainClass.getCoolDownsConfig()?.get("${player.uniqueId}").toString().toLongOrNull()
-                        if (savedCoolDown != null && time-newCoolDown < savedCoolDown) {
-                            val coolDownLeft = coolDown - ((time - savedCoolDown) / 1000)
-                            return coolDownLeft.toString()
-                        }
-                        return "0"
-                    }
+                    return "0"
                 }
             }
 
             input == "enabled_worlds" -> {
-                val enabledWorlds = conf().getProperty(Config.enabledWorlds)
-                if (enabledWorlds == null || enabledWorlds.contains("all")){
+                if (enabledWorlds.isEmpty() || enabledWorlds.contains("all")){
                     return Bukkit.getWorlds().map(World::getName).toString().replace("[", "").replace("]", "")
                 }
                 return enabledWorlds.toString().replace("[", "").replace("]", "")

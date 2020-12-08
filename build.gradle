@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'me.blitzgamer_88'
-version '0.0.4'
+version '1.4'
 
 repositories {
 
@@ -25,7 +25,7 @@ dependencies {
     pdm 'ch.jalu:configme:1.1.0'
     pdm "io.papermc:paperlib:1.0.5"
 
-    compileOnly "org.spigotmc:spigot-api:1.16.3-R0.1-SNAPSHOT"
+    compileOnly "org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT"
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.0'
 

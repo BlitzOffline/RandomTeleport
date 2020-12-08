@@ -15,30 +15,12 @@ maxZ: 150
 # Leave it to '0' if you want the cooldown to be disabled.
 coolDown: 0
 
-# If you set this to true, the cooldown will be updated when a player is teleported by another player/console/plugin/etc. and also checked unless they have the bypass permission.
-useCoolDownWhenTeleportedByOthers: false
-
 # These worlds will be used when using '/rtp <player>'.
 # You can use the word 'all' and the plugin will use all worlds.
 enabled_worlds:
   - world
   - world_nether
   - all
-
-# If you enable this, messages will be sent to console debugging stuff like why a player cannot teleport to a location.
-# This is meant more to check if the plugin works as intended.
-debug: false
-
-# This permission will be used for a player to use the '/rtp' command on themselves.
-rtpPermissionSelf: rtp.self
-# This permission will be used for a player to use the '/rtp' command on other players.
-rtpPermissionOthers: rtp.others
-# This permission will be used for a player to use the '/rtp world' command on themselves.
-rtpWorldPermissionSelf: rtp.world
-# This permission will be used for a player to use the '/rtp world' command on other players.
-rtpWorldPermissionOthers: rtp.world.others
-# When a player has this permission, he will bypass the cooldown.
-rtpCoolDownBypassPermission: rtp.cooldown.bypass
 
 # Customize the messages that are sent by the plugin:
 targetNotSpecified: '&cYou need to specify a target!'
