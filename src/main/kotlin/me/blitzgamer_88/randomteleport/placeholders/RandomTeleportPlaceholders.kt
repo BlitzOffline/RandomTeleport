@@ -1,6 +1,7 @@
 package me.blitzgamer_88.randomteleport.placeholders
 
 import me.blitzgamer_88.randomteleport.RandomTeleport
+import me.blitzgamer_88.randomteleport.util.coolDowns
 import me.blitzgamer_88.randomteleport.util.cooldown
 import me.blitzgamer_88.randomteleport.util.enabledWorlds
 import me.clip.placeholderapi.PlaceholderAPIPlugin
@@ -16,15 +17,14 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
     }
 
     override fun getVersion(): String {
-        return "0.4"
+        return "1.5"
     }
 
     override fun getIdentifier(): String {
         return "randomtp"
     }
 
-    override fun persist(): Boolean
-    {
+    override fun persist(): Boolean {
         return true
     }
 
@@ -41,16 +41,16 @@ class RandomTeleportPlaceholders(private val mainClass: RandomTeleport) : Placeh
                 val args = input.split('_')
                 if (args.size > 2) return null
 
-                if (args[1] == "enabled") return if (cooldown > 0) formatBoolean(true) else formatBoolean(false)
+                if (args[1] == "enabled") return formatBoolean(cooldown > 0)
 
                 if (args[1] == "left") {
                     if (cooldown == 0) return "0"
 
                     val currentTime = System.currentTimeMillis()
                     val newCoolDown = cooldown*1000.toLong()
-                    val savedCoolDown = mainClass.coolDowns[player.uniqueId]
+                    val savedCoolDown = coolDowns[player.uniqueId] ?: return null
 
-                    if (savedCoolDown != null && currentTime-newCoolDown < savedCoolDown) {
+                    if (currentTime-newCoolDown < savedCoolDown) {
                         val coolDownLeft = cooldown - ((currentTime - savedCoolDown) / 1000)
                         return coolDownLeft.toString()
                     }

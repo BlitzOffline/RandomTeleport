@@ -1,37 +1,56 @@
 # This is how many times the plugins checks for a safe location before stopping.
-# Keep it around 10 or lower for best performance.
-maxAttempts: 10
+# Keep it around 15 or lower for best performance.
+max-attempts: 15
 
 # If this is enabled, the plugin will check so the teleport location is not in a WorldGuard region
-useWorldGuard: true
+use-worldguard: true
 
 # Enable this if you want the plugin to use world borders as a max x and z
-useBorder: true
+use-border: true
 # These values are used if useBorder is set to false
-maxX: 150
-maxZ: 150
+max-x: 150
+max-z: 150
 
 # Specify how long the cooldown for the rtp command should be.
-# Leave it to '0' if you want the cooldown to be disabled.
-coolDown: 0
+# Set it to '-1' if you want the cooldown to be disabled.
+cooldown: -1
+
+# Specify how long the warmup for the rtp command should be.
+# Set it to '-1' if you want the warmup to be disabled.
+warmup: -1
 
 # These worlds will be used when using '/rtp <player>'.
 # You can use the word 'all' and the plugin will use all worlds.
-enabled_worlds:
+enabled-worlds:
   - world
   - world_nether
   - all
 
 # Customize the messages that are sent by the plugin:
-targetNotSpecified: '&cYou need to specify a target!'
-noPermission: '&cYou don''t have permission to do that.'
-wrongWorldName: '&cThe world you specified does not exist.'
-successfullyTeleported: '&aYou have been randomly teleported.'
-successfullyTeleportedOther: '&aYou have successfully teleported %player_name%.'
-noLocationFound: '&cCould not find a safe location. Try again.'
-noWorldFound: '&cAll worlds listed in config.yml are wrong.'
-configReload: '&cConfiguration reloaded.'
-# This and 'coolDownRemainingTarget' are the only places where you can use the internal placeholder: '%cooldown%'
-# This placeholder shows how many seconds of the cooldown a player has left.
-coolDownRemaining: '&cYou still have %cooldown% seconds remaining until you can use this again.'
-coolDownRemainingTarget: '%player_name% has %cooldown% seconds of cooldown left.'
+NO-TARGET-SPECIFIED: '&cYou need to specify a target!'
+WORNG-WORLD-NAME: '&cThe world you specified does not exist.'
+TELEPORTED-SUCCESSFULLY: '&aYou have been randomly teleported.'
+TARGET-TELEPORTED-SUCCESSFULLY: '&aYou have successfully teleported %player_name%.'
+NO-SAFE-LOCATION-FOUND: '&cCould not find a safe location. Try again.'
+ALREADY-TELEPORTING: '&cYou are already being teleported!'
+ALREADY-TELEPORTING-TARGET: '&cPlayer is already being teleported!'
+WARMUP: '&7You will be teleported soon. Do not move!'
+NO-PERMISSION: '&cYou don''t have permission to do that.'
+CONFIG-WORLDS-WRONG: '&cAll worlds listed in config.yml are wrong.'
+CONFIG-RELOAD: '&cConfiguration reloaded.'
+
+# 'TELEPORT-CANCELED' is the only message where you can use the internal placeholder: %reason%
+# This placeholders will display the reason to why the teleportation was canceled
+TELEPORT-CANCELED: '&cTeleport canceled because you %reason%.'
+
+# These are the messages that will replace the placeholder %reason% in 'TELEPORT-CANCELED'
+HURT: 'hurt something/someone'
+GOT-HURT: 'were hurt'
+PLACED-A-BLOCK: 'placed a block'
+BROKE-A-BLOCK: 'broke a block'
+MOVED: 'moved'
+
+# 'COOLDOWN-REMAINING' and 'COOLDOWN-REMAINING-TARGET' are the only messages where you can use the internal placeholder: '%cooldown%'
+# This placeholder shows how many seconds are left until the player's cooldown is going to expire.
+COOLDOWN-REMAINING: '&cYou still have %cooldown% seconds remaining until you can use this again.'
+COOLDOWN-REMAINING-TARGET: '%player_name% has %cooldown% seconds of cooldown left.'
