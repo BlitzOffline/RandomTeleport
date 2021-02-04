@@ -2,8 +2,10 @@
 # Keep it around 15 or lower for best performance.
 max-attempts: 15
 
-# If this is enabled, the plugin will check so the teleport location is not in a WorldGuard region
-use-worldguard: true
+# Enable or disable Lands and WorldGuard hooks. These are used to not teleport players in claimed lands or in worldguard regions.
+hooks:
+  lands: false
+  worldguard: true
 
 # Enable this if you want the plugin to use world borders as a max x and z
 use-border: true

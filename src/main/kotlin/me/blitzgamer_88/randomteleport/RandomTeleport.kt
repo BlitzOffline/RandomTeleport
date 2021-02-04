@@ -1,5 +1,6 @@
 package me.blitzgamer_88.randomteleport
 
+import me.angeschossen.lands.api.integration.LandsIntegration
 import me.blitzgamer_88.randomteleport.commands.CommandRandomTeleport
 import me.blitzgamer_88.randomteleport.listeners.DamageListener
 import me.blitzgamer_88.randomteleport.listeners.InteractListener
@@ -28,7 +29,8 @@ class RandomTeleport : JavaPlugin() {
         loadMessages()
 
         dependenciesHook("PlaceholderAPI")
-        if (hookWorldGuard) dependenciesHook("WorldGuard")
+        if (useLands) { dependenciesHook("Lands"); registerLandsIntegration(this) }
+        if (useWorldGuard) dependenciesHook("WorldGuard")
 
         registerListeners(
             DamageListener(),

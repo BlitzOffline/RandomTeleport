@@ -1,6 +1,6 @@
 plugins {
     id 'me.bristermitten.pdm' version '0.0.31'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
 }
 
 group 'me.blitzgamer_88.randomteleport'
@@ -9,6 +9,7 @@ version '1.5'
 repositories {
 
     mavenCentral()
+    maven { url = 'https://jitpack.io' }
     maven { url = 'https://maven.enginehub.org/repo/' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
@@ -23,6 +24,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.0'
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'com.github.angeschossen:LandsAPI:5.0.5'
 }
 
 jar.dependsOn project.tasks.getByName('pdm')

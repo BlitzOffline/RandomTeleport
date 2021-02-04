@@ -14,8 +14,10 @@ internal object Config : SettingsHolder {
     val maxAttempts: Property<Int> = newProperty("max-attempts", 10)
 
     @JvmField
-    @Comment("If this is enabled, the plugin will check so the teleport location is not in a WorldGuard region")
-    val useWorldGuard: Property<Boolean> = newProperty("use-worldguard", true)
+    @Comment("# Enable or disable Lands and WorldGuard hooks. These are used to not teleport players in claimed lands or in worldguard regions.")
+    val useWorldGuard: Property<Boolean> = newProperty("hooks.worldguard", true)
+    @JvmField
+    val useLands: Property<Boolean> = newProperty("hooks.lands", true)
 
     @JvmField
     @Comment("Enable this if you want the plugin to use world borders as a max x and z")
