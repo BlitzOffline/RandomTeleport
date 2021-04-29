@@ -5,7 +5,7 @@ import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.messages
 import com.blitzoffline.randomteleport.config.settings
-import com.blitzoffline.randomteleport.cooldown.coolDowns
+import com.blitzoffline.randomteleport.cooldown.cooldowns
 import com.blitzoffline.randomteleport.cooldown.tasks
 import com.blitzoffline.randomteleport.cooldown.warmupsStarted
 import com.blitzoffline.randomteleport.util.getRandomLocation
@@ -50,8 +50,8 @@ class CommandRandomTeleport(private val plugin: RandomTeleport) : CommandBase() 
         }
 
         if (player.isInCooldown()) {
-            if (target == null) messages[Messages.COOLDOWN_REMAINING].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - coolDowns[player.uniqueId]!!) / 1000)}").msg(player)
-            else PlaceholderAPI.setPlaceholders(target, messages[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - coolDowns[player.uniqueId]!!) / 1000)}")).msg(sender)
+            if (target == null) messages[Messages.COOLDOWN_REMAINING].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}").msg(player)
+            else PlaceholderAPI.setPlaceholders(target, messages[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}")).msg(sender)
             return
         }
 
@@ -102,7 +102,7 @@ class CommandRandomTeleport(private val plugin: RandomTeleport) : CommandBase() 
                     Runnable {
                         newLocation.world.getChunkAtAsync(newLocation).thenAccept {
                             player.teleportAsync(newLocation, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept {
-                                if (settings[Settings.COOLDOWN] > 0) coolDowns[player.uniqueId] = System.currentTimeMillis()
+                                if (settings[Settings.COOLDOWN] > 0) cooldowns[player.uniqueId] = System.currentTimeMillis()
                                 if (target != null) PlaceholderAPI.setPlaceholders(target, messages[Messages.TARGET_TELEPORTED_SUCCESSFULLY]).msg(sender)
                                 messages[Messages.TELEPORTED_SUCCESSFULLY].msg(player)
                             }
@@ -116,7 +116,7 @@ class CommandRandomTeleport(private val plugin: RandomTeleport) : CommandBase() 
 
         newLocation.world.getChunkAtAsync(newLocation).thenAccept {
             player.teleportAsync(newLocation, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept {
-                if (settings[Settings.COOLDOWN] > 0) coolDowns[player.uniqueId] = System.currentTimeMillis()
+                if (settings[Settings.COOLDOWN] > 0) cooldowns[player.uniqueId] = System.currentTimeMillis()
                 if (target != null) PlaceholderAPI.setPlaceholders(target, messages[Messages.TARGET_TELEPORTED_SUCCESSFULLY]).msg(sender)
                 messages[Messages.TELEPORTED_SUCCESSFULLY].msg(player)
             }
@@ -158,8 +158,8 @@ class CommandRandomTeleport(private val plugin: RandomTeleport) : CommandBase() 
         }
 
         if (player.isInCooldown()) {
-            if (target == null) messages[Messages.COOLDOWN_REMAINING].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - coolDowns[player.uniqueId]!!) / 1000)}").msg(player)
-            else PlaceholderAPI.setPlaceholders(target, messages[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - coolDowns[player.uniqueId]!!) / 1000)}")).msg(sender)
+            if (target == null) messages[Messages.COOLDOWN_REMAINING].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}").msg(player)
+            else PlaceholderAPI.setPlaceholders(target, messages[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}")).msg(sender)
             return
         }
 
@@ -190,7 +190,7 @@ class CommandRandomTeleport(private val plugin: RandomTeleport) : CommandBase() 
                     Runnable {
                         newLocation.world.getChunkAtAsync(newLocation).thenAccept {
                             player.teleportAsync(newLocation, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept {
-                                if (settings[Settings.COOLDOWN] > 0) coolDowns[player.uniqueId] = System.currentTimeMillis()
+                                if (settings[Settings.COOLDOWN] > 0) cooldowns[player.uniqueId] = System.currentTimeMillis()
                                 if (target != null) PlaceholderAPI.setPlaceholders(target, messages[Messages.TARGET_TELEPORTED_SUCCESSFULLY]).msg(sender)
                                 messages[Messages.TELEPORTED_SUCCESSFULLY].msg(player)
                             }
@@ -203,7 +203,7 @@ class CommandRandomTeleport(private val plugin: RandomTeleport) : CommandBase() 
 
         newLocation.world.getChunkAtAsync(newLocation).thenAccept {
             player.teleportAsync(newLocation, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept {
-                if (settings[Settings.COOLDOWN] > 0) coolDowns[player.uniqueId] = System.currentTimeMillis()
+                if (settings[Settings.COOLDOWN] > 0) cooldowns[player.uniqueId] = System.currentTimeMillis()
                 if (target != null) PlaceholderAPI.setPlaceholders(target, messages[Messages.TARGET_TELEPORTED_SUCCESSFULLY]).msg(sender)
                 messages[Messages.TELEPORTED_SUCCESSFULLY].msg(player)
             }
