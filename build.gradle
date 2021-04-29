@@ -1,30 +1,63 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
-    id 'me.bristermitten.pdm' version '0.0.31'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.32'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group 'me.blitzgamer_88.randomteleport'
 version '1.5'
 
-repositories {
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
 
+repositories {
     mavenCentral()
-    maven { url = 'https://jitpack.io' }
     maven { url = 'https://maven.enginehub.org/repo/' }
+    maven { url = 'https://repo.mattstudios.me/artifactory/public' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-
 }
+
+
+// TODO: ADD VAULT SUPPORT (COST PER TELEPORT)
 
 dependencies {
-    pdm 'me.mattstudios.utils:matt-framework:1.4'
-    pdm 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    pdm 'ch.jalu:configme:1.2.0'
+    // KOTLIN
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    // MF COMMANDS
+    implementation 'me.mattstudios.utils:matt-framework:1.4.6'
+    // MF CONFIG
+    implementation 'me.mattstudios:triumph-config:1.0.5-SNAPSHOT'
+    // ADVENTURE
+    implementation 'net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT'
 
+    // PLACEHOLDERAPI
     compileOnly 'me.clip:placeholderapi:2.10.9'
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.0'
+    // WORLDGUARD
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4'
+    // PAPER
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
-    compileOnly 'com.github.angeschossen:LandsAPI:5.0.5'
 }
 
-jar.dependsOn project.tasks.getByName('pdm')
+
+shadowJar {
+    minimize()
+    relocate 'kotlin', 'com.blitzoffline.bountysystem.libs.kotlin'
+    relocate 'me.mattstudios.mf', 'com.blitzoffline.bountysystem.libs.mf'
+    relocate 'me.mattstudios.mfgui', 'com.blitzoffline.bountysystem.libs.mfgui'
+    relocate 'me.mattstudios.config', 'com.blitzoffline.bountysystem.libs.mfconf'
+    relocate 'net.kyori', 'com.blitzoffline.bountysystem.libs.adventure'
+    relocate 'org.intellij', 'com.blitzoffline.bountysystem.libs.jetbrains'
+    relocate 'org.jetbrains', 'com.blitzoffline.bountysystem.libs.jetbrains'
+    relocate 'org.yaml.snakeyaml', 'com.blitzoffline.bountysystem.libs.yaml'
+    archiveFileName.set("BountySystem-${project.version}.jar")
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_11
+    kotlinOptions.javaParameters = true
+}

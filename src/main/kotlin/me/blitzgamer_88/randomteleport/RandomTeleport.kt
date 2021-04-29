@@ -18,7 +18,6 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
 class RandomTeleport : JavaPlugin() {
-    override fun onLoad() { PluginDependencyManager.of(this).loadAllDependencies() }
     private lateinit var commandManager: CommandManager
 
     override fun onEnable() {
