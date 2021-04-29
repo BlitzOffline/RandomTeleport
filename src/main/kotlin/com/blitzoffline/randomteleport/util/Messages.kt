@@ -1,16 +1,20 @@
 package com.blitzoffline.randomteleport.util
 
 import me.clip.placeholderapi.PlaceholderAPI
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-fun String.color(): String = ChatColor.translateAlternateColorCodes('&', this)
 
-fun String.parsePAPI(player: Player): String = PlaceholderAPI.setPlaceholders(player, this.color())
+fun String.parsePAPI(player: Player): String = PlaceholderAPI.setPlaceholders(player, this)
 
-fun String.log() = Bukkit.getConsoleSender().sendMessage(this.color())
+lateinit var adventure: BukkitAudiences
+val legacySerializer = LegacyComponentSerializer.legacyAmpersand()
 
-fun String.msg(player: Player) = player.sendMessage(this.color().parsePAPI(player))
-fun String.msg(sender: CommandSender) = sender.sendMessage(this.color())
+fun String.log() = adventure.console().sendMessage(legacySerializer.deserialize(this))
+fun String.msg(player: Player) = adventure.player(player).sendMessage(legacySerializer.deserialize(this.parsePAPI(player)))
+fun String.msg(sender: CommandSender) = adventure.sender(sender).sendMessage(legacySerializer.deserialize(this))
+fun String.broadcast() = adventure.all().sendMessage(legacySerializer.deserialize(this))

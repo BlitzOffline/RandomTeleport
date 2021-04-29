@@ -11,6 +11,7 @@ import com.blitzoffline.randomteleport.listeners.DamageListener
 import com.blitzoffline.randomteleport.listeners.InteractListener
 import com.blitzoffline.randomteleport.listeners.MoveListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
+import com.blitzoffline.randomteleport.util.adventure
 import com.blitzoffline.randomteleport.util.log
 import com.blitzoffline.randomteleport.util.msg
 import com.blitzoffline.randomteleport.util.registerLandsIntegration
@@ -18,6 +19,7 @@ import me.mattstudios.mf.base.CommandBase
 import me.mattstudios.mf.base.CommandManager
 import me.mattstudios.mf.base.components.CompletionResolver
 import me.mattstudios.mf.base.components.MessageResolver
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.event.Listener
@@ -39,6 +41,7 @@ class RandomTeleport : JavaPlugin() {
             InteractListener(),
             MoveListener()
         )
+        adventure = BukkitAudiences.create(this)
         commandManager = CommandManager(this, true)
         registerMessage("cmd.no.permission") { sender -> messages[Messages.NO_PERMISSION].msg(sender) }
         registerCompletion("#worlds") { Bukkit.getWorlds().map(World::getName) }
