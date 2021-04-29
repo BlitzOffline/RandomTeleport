@@ -1,4 +1,4 @@
-package me.blitzgamer_88.randomteleport.util
+package com.blitzoffline.randomteleport.util
 
 import org.bukkit.Location
 import org.bukkit.World

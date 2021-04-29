@@ -1,6 +1,10 @@
-package me.blitzgamer_88.randomteleport.listeners
+package com.blitzoffline.randomteleport.listeners
 
-import me.blitzgamer_88.randomteleport.util.*
+import com.blitzoffline.randomteleport.config.holder.Messages
+import com.blitzoffline.randomteleport.config.messages
+import com.blitzoffline.randomteleport.cooldown.tasks
+import com.blitzoffline.randomteleport.cooldown.warmupsStarted
+import com.blitzoffline.randomteleport.util.msg
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
@@ -19,6 +23,6 @@ class MoveListener : Listener {
         tasks[player.uniqueId]?.cancel()
         tasks.remove(player.uniqueId)
         warmupsStarted.remove(player.uniqueId)
-        teleportCanceled.replace("%reason%", movedReason).msg(player)
+        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.MOVED]).msg(player)
     }
 }

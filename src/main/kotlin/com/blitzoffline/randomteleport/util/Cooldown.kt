@@ -1,5 +1,8 @@
-package me.blitzgamer_88.randomteleport.util
+package com.blitzoffline.randomteleport.util
 
+import com.blitzoffline.randomteleport.config.holder.Settings
+import com.blitzoffline.randomteleport.config.settings
+import com.blitzoffline.randomteleport.cooldown.coolDowns
 import org.bukkit.entity.Player
 
 fun Player.isInCooldown() : Boolean {
@@ -7,7 +10,7 @@ fun Player.isInCooldown() : Boolean {
 
     val lastCoolDown = coolDowns[this.uniqueId] ?: return false
     val currentTime = System.currentTimeMillis()
-    val newCoolDown = cooldown * 1000.toLong()
+    val newCoolDown = settings[Settings.COOLDOWN] * 1000.toLong()
 
     if (currentTime-newCoolDown >= lastCoolDown) return false
     return true

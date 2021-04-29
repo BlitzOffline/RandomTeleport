@@ -1,11 +1,13 @@
-package me.blitzgamer_88.randomteleport.util
+package com.blitzoffline.randomteleport.util
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import org.bukkit.Location
 import org.bukkit.Material
 import me.angeschossen.lands.api.integration.LandsIntegration
-import me.blitzgamer_88.randomteleport.RandomTeleport
+import com.blitzoffline.randomteleport.RandomTeleport
+import com.blitzoffline.randomteleport.config.holder.Settings
+import com.blitzoffline.randomteleport.config.settings
 
 
 private val unsafeBlocks = listOf(
@@ -32,8 +34,8 @@ fun registerLandsIntegration(plugin: RandomTeleport) {
 fun Location.isSafe(): Boolean {
     val head = this.clone().add(0.0, 1.0, 0.0)
     val ground = this.clone().subtract(0.0, 1.0, 0.0)
-    if (useWorldGuard) if(ground.inWorldGuardRegion() || this.inWorldGuardRegion() || head.inWorldGuardRegion()) return false
-    if (useLands) if(ground.inLands() || this.inLands() || head.inLands()) return false
+    if (settings[Settings.HOOK_WG]) if(ground.inWorldGuardRegion() || this.inWorldGuardRegion() || head.inWorldGuardRegion()) return false
+    if (settings[Settings.HOOK_LANDS]) if(ground.inLands() || this.inLands() || head.inLands()) return false
     return groundIsSafe(ground) && footIsSafe(this) && headIsSafe(head)
 }
 

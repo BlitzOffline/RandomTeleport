@@ -5,8 +5,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
-group 'me.blitzgamer_88.randomteleport'
-version '1.5'
+group 'com.blitzoffline'
+version '1.6'
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
@@ -16,12 +16,12 @@ processResources {
 
 repositories {
     mavenCentral()
+    maven { url = 'https://jitpack.io' }
     maven { url = 'https://maven.enginehub.org/repo/' }
     maven { url = 'https://repo.mattstudios.me/artifactory/public' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
-
 
 // TODO: ADD VAULT SUPPORT (COST PER TELEPORT)
 
@@ -37,6 +37,10 @@ dependencies {
 
     // PLACEHOLDERAPI
     compileOnly 'me.clip:placeholderapi:2.10.9'
+    // VAULT
+//    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    // LANDS
+    compileOnly 'com.github.angeschossen:LandsAPI:5.6.0'
     // WORLDGUARD
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4'
     // PAPER

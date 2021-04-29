@@ -1,7 +1,7 @@
 name: RandomTeleport
-version: 1.5
-main: me.blitzgamer_88.randomteleport.RandomTeleport
+version: @version@
+main: com.blitzoffline.randomteleport.RandomTeleport
 api-version: 1.13
 softdepend: [PlaceholderAPI, WorldGuard, Lands]
 author: BlitzGamer_88
-website: github.com/blitzgamer-88
+website: github.com/blitzoffline

@@ -1,6 +1,10 @@
-package me.blitzgamer_88.randomteleport.listeners
+package com.blitzoffline.randomteleport.listeners
 
-import me.blitzgamer_88.randomteleport.util.*
+import com.blitzoffline.randomteleport.config.holder.Messages
+import com.blitzoffline.randomteleport.config.messages
+import com.blitzoffline.randomteleport.cooldown.tasks
+import com.blitzoffline.randomteleport.cooldown.warmupsStarted
+import com.blitzoffline.randomteleport.util.msg
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -18,7 +22,7 @@ class DamageListener : Listener {
         tasks[player.uniqueId]?.cancel()
         tasks.remove(player.uniqueId)
         warmupsStarted.remove(player.uniqueId)
-        teleportCanceled.replace("%reason%", gotHurtReason).msg(player)
+        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.GOT_HURT]).msg(player)
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -30,6 +34,6 @@ class DamageListener : Listener {
         tasks[attacker.uniqueId]?.cancel()
         tasks.remove(attacker.uniqueId)
         warmupsStarted.remove(attacker.uniqueId)
-        teleportCanceled.replace("%reason%", hurtReason).msg(attacker)
+        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.HURT]).msg(attacker)
     }
 }
