@@ -6,10 +6,10 @@ import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.messages
 import com.blitzoffline.randomteleport.config.settings
 import com.blitzoffline.randomteleport.cooldown.cooldowns
+import com.blitzoffline.randomteleport.cooldown.isInCooldown
 import com.blitzoffline.randomteleport.cooldown.tasks
 import com.blitzoffline.randomteleport.cooldown.warmupsStarted
 import com.blitzoffline.randomteleport.util.getRandomLocation
-import com.blitzoffline.randomteleport.util.isInCooldown
 import com.blitzoffline.randomteleport.util.isSafe
 import com.blitzoffline.randomteleport.util.msg
 import me.clip.placeholderapi.PlaceholderAPI
@@ -29,7 +29,6 @@ class CommandRandomTeleport(private val plugin: RandomTeleport) : CommandBase() 
 
     @Default
     fun randomTeleport(sender: CommandSender, @Completion("#players") @Optional target: Player?) {
-
         val startTime = System.currentTimeMillis()/1000
 
         if (target == null && sender !is Player) {

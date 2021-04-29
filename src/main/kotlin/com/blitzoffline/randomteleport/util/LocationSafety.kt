@@ -26,47 +26,33 @@ private val unsafeBlocks = listOf(
 )
 
 private lateinit var landsIntegration: LandsIntegration
-
-fun registerLandsIntegration(plugin: RandomTeleport) {
-    landsIntegration = LandsIntegration(plugin)
-}
+fun registerLandsIntegration(plugin: RandomTeleport) { landsIntegration = LandsIntegration(plugin) }
 
 fun Location.isSafe(): Boolean {
     val head = this.clone().add(0.0, 1.0, 0.0)
     val ground = this.clone().subtract(0.0, 1.0, 0.0)
-    if (settings[Settings.HOOK_WG]) if(ground.inWorldGuardRegion() || this.inWorldGuardRegion() || head.inWorldGuardRegion()) return false
-    if (settings[Settings.HOOK_LANDS]) if(ground.inLands() || this.inLands() || head.inLands()) return false
-    return groundIsSafe(ground) && footIsSafe(this) && headIsSafe(head)
+    if (settings[Settings.HOOK_WG]) if(ground.isInWorldGuardRegion() || this.isInWorldGuardRegion() || head.isInWorldGuardRegion()) return false
+    if (settings[Settings.HOOK_LANDS]) if(ground.isInLand() || this.isInLand() || head.isInLand()) return false
+    return ground.groundIsSafe() && this.bodyIsSafe() && head.bodyIsSafe()
 }
 
-fun Location.inWorldGuardRegion() : Boolean {
-    val weLocation: com.sk89q.worldedit.util.Location = BukkitAdapter.adapt(this)
+fun Location.isInWorldGuardRegion() : Boolean {
+    val weLocation = BukkitAdapter.adapt(this)
     val container = WorldGuard.getInstance().platform.regionContainer
-    val query = container.createQuery()
-    val regionSet = query.getApplicableRegions(weLocation)
 
-    return regionSet.size() > 0
+    return container.createQuery().getApplicableRegions(weLocation).size() > 0
 }
 
-fun Location.inLands() : Boolean {
-    return landsIntegration.isClaimed(this)
-}
+fun Location.isInLand() = landsIntegration.isClaimed(this)
 
-
-fun groundIsSafe(ground: Location) : Boolean {
-    val block = ground.block
+fun Location.groundIsSafe(): Boolean {
+    val block = this.block
     val material = block.type
     return !block.isEmpty && !block.isLiquid && !material.isAir && !unsafeBlocks.contains(material)
 }
 
-fun footIsSafe(foot: Location) : Boolean {
-    val block = foot.block
+fun Location.bodyIsSafe(): Boolean {
+    val block = this.block
     val material = block.type
     return block.isEmpty || material.isAir
-}
-
-fun headIsSafe(head: Location) : Boolean {
-    val block = head.block
-    val material = block.type
-    return block.isEmpty|| material.isAir
 }
