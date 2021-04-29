@@ -48,14 +48,14 @@ dependencies {
 
 shadowJar {
     minimize()
-    relocate 'kotlin', 'com.blitzoffline.bountysystem.libs.kotlin'
-    relocate 'me.mattstudios.mf', 'com.blitzoffline.bountysystem.libs.mf'
-    relocate 'me.mattstudios.config', 'com.blitzoffline.bountysystem.libs.mfconf'
-    relocate 'net.kyori', 'com.blitzoffline.bountysystem.libs.adventure'
-    relocate 'org.intellij', 'com.blitzoffline.bountysystem.libs.jetbrains'
-    relocate 'org.jetbrains', 'com.blitzoffline.bountysystem.libs.jetbrains'
-    relocate 'org.yaml.snakeyaml', 'com.blitzoffline.bountysystem.libs.yaml'
-    archiveFileName.set("BountySystem-${project.version}.jar")
+    relocate 'kotlin', 'com.blitzoffline.randomteleport.libs.kotlin'
+    relocate 'me.mattstudios.mf', 'com.blitzoffline.randomteleport.libs.mf'
+    relocate 'me.mattstudios.config', 'com.blitzoffline.randomteleport.libs.mfconf'
+    relocate 'net.kyori', 'com.blitzoffline.randomteleport.libs.adventure'
+    relocate 'org.intellij', 'com.blitzoffline.randomteleport.libs.jetbrains'
+    relocate 'org.jetbrains', 'com.blitzoffline.randomteleport.libs.jetbrains'
+    relocate 'org.yaml.snakeyaml', 'com.blitzoffline.randomteleport.libs.yaml'
+    archiveFileName.set("RandomTeleport-${project.version}.jar")
 }
 
 compileKotlin {
