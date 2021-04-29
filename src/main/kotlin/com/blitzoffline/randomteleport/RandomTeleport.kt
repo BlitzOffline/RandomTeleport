@@ -9,6 +9,7 @@ import com.blitzoffline.randomteleport.config.loadConfig
 import com.blitzoffline.randomteleport.config.loadMessages
 import com.blitzoffline.randomteleport.config.messages
 import com.blitzoffline.randomteleport.config.settings
+import com.blitzoffline.randomteleport.config.setupEconomy
 import com.blitzoffline.randomteleport.listeners.DamageListener
 import com.blitzoffline.randomteleport.listeners.InteractListener
 import com.blitzoffline.randomteleport.listeners.MoveListener
@@ -31,12 +32,19 @@ class RandomTeleport : JavaPlugin() {
     private lateinit var commandManager: CommandManager
 
     override fun onEnable() {
+        try {
+            Class.forName("com.destroystokyo.paper.PaperConfig")
+        } catch (ignored: ClassNotFoundException) {
+            "&cTHIS PLUGIN SHOULD BE USED ON PAPER: papermc.io/download".log()
+        }
+
         loadConfig(this)
         loadMessages(this)
 
         dependenciesHook("PlaceholderAPI")
+        if (settings[Settings.HOOK_WG]) dependenciesHook("WorldGuard")
+        if (settings[Settings.HOOK_VAULT]) dependenciesHook("Vault")
         if (settings[Settings.HOOK_LANDS]) { dependenciesHook("Lands"); registerLandsIntegration(this) }
-        if (settings[Settings.HOOK_LANDS]) dependenciesHook("WorldGuard")
 
         registerListeners(
             DamageListener(),
@@ -65,6 +73,14 @@ class RandomTeleport : JavaPlugin() {
     }
 
     private fun dependenciesHook(plugin: String) {
+        if (plugin == "Vault") {
+            if (!setupEconomy()) {
+                "&7[RandomTeleport] Could not find: $plugin. Plugin disabled!".log()
+                Bukkit.getPluginManager().disablePlugin(this)
+            }
+            "&7[RandomTeleport] Successfully hooked into $plugin!".log()
+            return
+        }
         if (Bukkit.getPluginManager().getPlugin(plugin) == null) {
             "&7[RandomTeleport] Could not find: $plugin. Plugin disabled!".log()
             Bukkit.getPluginManager().disablePlugin(this)

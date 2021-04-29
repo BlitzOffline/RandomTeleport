@@ -29,6 +29,7 @@ Permission | Description
 -----------|------------
 randomteleport.cooldown.bypass | Bypass the cooldown if its enabled.
 randomteleport.warmup.bypass | Bypass the warmup if its enabled.
+randomteleport.cost.bypass | Bypass the cost for random teleport.
 
 ### Placeholders:
 Placeholder | Description

@@ -1,6 +1,7 @@
 package com.blitzoffline.randomteleport.commands
 
 import com.blitzoffline.randomteleport.RandomTeleport
+import com.blitzoffline.randomteleport.config.econ
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.messages
@@ -46,6 +47,11 @@ class WorldCommand(private val plugin: RandomTeleport) : CommandBase() {
 
         if (target != null && !sender.hasPermission("randomteleport.world.others")) {
             messages[Messages.NO_PERMISSION].msg(sender)
+            return
+        }
+
+        if (sender is Player && settings[Settings.HOOK_VAULT] && econ.getBalance(sender) < settings[Settings.TELEPORT_PRICE] && !player.hasPermission("randomteleport.cost.bypass")) {
+            messages[Messages.NOT_ENOUGH_MONEY].msg(sender)
             return
         }
 

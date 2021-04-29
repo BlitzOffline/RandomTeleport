@@ -11,8 +11,14 @@ object Settings : SettingsHolder {
     @Path("hooks.lands")
     val HOOK_LANDS = Property.create(false)
 
+    @Path("hooks.vault")
+    val HOOK_VAULT = Property.create(false)
+
     @Path("hooks.worldguard")
     val HOOK_WG = Property.create(true)
+
+    @Path("teleport-price")
+    val TELEPORT_PRICE = Property.create(100)
 
     @Path("use-border")
     val USE_BORDER = Property.create(true)

@@ -5,6 +5,9 @@ import me.mattstudios.config.annotations.Path
 import me.mattstudios.config.properties.Property
 
 object Messages : SettingsHolder {
+    @Path("NOT-ENOUGH-MONEY")
+    val NOT_ENOUGH_MONEY = Property.create("&cYou don't have enough money!")
+
     @Path("NO-TARGET-SPECIFIED")
     val NO_TARGET_SPECIFIED = Property.create("&cYou need to specify a target!")
 

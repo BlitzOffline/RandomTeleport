@@ -3,9 +3,15 @@
 max-attempts: 15
 
 # Enable or disable Lands and WorldGuard hooks. These are used to not teleport players in claimed lands or in worldguard regions.
+# Enable or disable Vault hook. This is used for teleport prices.
 hooks:
   lands: false
+  vault: false
   worldguard: true
+
+# This option will only work if Vault hook is enabled.
+# Here you can specify the price players have to pay to use /rtp
+teleport-price: 100
 
 # Enable this if you want the plugin to use world borders as a max x and z
 use-border: true

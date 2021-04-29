@@ -23,8 +23,6 @@ repositories {
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
-// TODO: ADD VAULT SUPPORT (COST PER TELEPORT)
-
 dependencies {
     // KOTLIN
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
@@ -38,7 +36,7 @@ dependencies {
     // PLACEHOLDERAPI
     compileOnly 'me.clip:placeholderapi:2.10.9'
     // VAULT
-//    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     // LANDS
     compileOnly 'com.github.angeschossen:LandsAPI:5.6.0'
     // WORLDGUARD
@@ -52,7 +50,6 @@ shadowJar {
     minimize()
     relocate 'kotlin', 'com.blitzoffline.bountysystem.libs.kotlin'
     relocate 'me.mattstudios.mf', 'com.blitzoffline.bountysystem.libs.mf'
-    relocate 'me.mattstudios.mfgui', 'com.blitzoffline.bountysystem.libs.mfgui'
     relocate 'me.mattstudios.config', 'com.blitzoffline.bountysystem.libs.mfconf'
     relocate 'net.kyori', 'com.blitzoffline.bountysystem.libs.adventure'
     relocate 'org.intellij', 'com.blitzoffline.bountysystem.libs.jetbrains'
