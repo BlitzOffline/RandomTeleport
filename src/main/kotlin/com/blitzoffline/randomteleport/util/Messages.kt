@@ -3,8 +3,6 @@ package com.blitzoffline.randomteleport.util
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 

@@ -1,6 +1,8 @@
 package com.blitzoffline.randomteleport
 
-import com.blitzoffline.randomteleport.commands.CommandRandomTeleport
+import com.blitzoffline.randomteleport.commands.MainCommand
+import com.blitzoffline.randomteleport.commands.ReloadCommand
+import com.blitzoffline.randomteleport.commands.WorldCommand
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.loadConfig
@@ -45,7 +47,11 @@ class RandomTeleport : JavaPlugin() {
         commandManager = CommandManager(this, true)
         registerMessage("cmd.no.permission") { sender -> messages[Messages.NO_PERMISSION].msg(sender) }
         registerCompletion("#worlds") { Bukkit.getWorlds().map(World::getName) }
-        registerCommands(CommandRandomTeleport(this))
+        registerCommands(
+            MainCommand(this),
+            ReloadCommand(this),
+            WorldCommand(this)
+        )
 
         RandomTeleportPlaceholders(this).register()
         "[RandomTeleport] Plugin enabled successfully!".log()

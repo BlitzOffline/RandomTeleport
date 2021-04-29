@@ -1,13 +1,13 @@
 package com.blitzoffline.randomteleport.util
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter
-import com.sk89q.worldguard.WorldGuard
-import org.bukkit.Location
-import org.bukkit.Material
-import me.angeschossen.lands.api.integration.LandsIntegration
 import com.blitzoffline.randomteleport.RandomTeleport
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.settings
+import com.sk89q.worldedit.bukkit.BukkitAdapter
+import com.sk89q.worldguard.WorldGuard
+import me.angeschossen.lands.api.integration.LandsIntegration
+import org.bukkit.Location
+import org.bukkit.Material
 
 
 private val unsafeBlocks = listOf(

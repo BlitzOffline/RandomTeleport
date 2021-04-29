@@ -11,12 +11,12 @@ val warmupsStarted = mutableListOf<UUID>()
 val tasks = HashMap<UUID, BukkitTask>()
 
 fun Player.isInCooldown() : Boolean {
-    if (this.hasPermission("rtp.cooldown.bypass")) return false
+    if (this.hasPermission("randomteleport.cooldown.bypass")) return false
 
-    val lastCoolDown = cooldowns[this.uniqueId] ?: return false
-    val currentTime = System.currentTimeMillis()
-    val newCoolDown = settings[Settings.COOLDOWN] * 1000.toLong()
+    val lastCooldown = cooldowns[this.uniqueId] ?: return false
+    val currTime = System.currentTimeMillis()
+    val newCooldown = settings[Settings.COOLDOWN] * 1000L
 
-    if (currentTime-newCoolDown >= lastCoolDown) return false
+    if (currTime - newCooldown >= lastCooldown) return false
     return true
 }

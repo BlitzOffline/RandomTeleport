@@ -35,7 +35,7 @@ class RandomTeleportPlaceholders(private val plugin: RandomTeleport) : Placehold
                     "left" -> {
                         if (player == null) return null
                         val p = player.player ?: return null
-                        if (p.hasPermission("rtp.cooldown.bypass")) return "0"
+                        if (p.hasPermission("randomteleport.cooldown.bypass")) return "0"
                         val savedCooldown = cooldowns[player.uniqueId] ?: return "0"
                         if (cooldown <= 0L) return "0"
                         val currTime = System.currentTimeMillis()
