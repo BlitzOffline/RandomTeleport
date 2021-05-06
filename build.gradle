@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.blitzoffline'
-version '1.6'
+version '1.7'
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
