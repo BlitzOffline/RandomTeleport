@@ -35,15 +35,16 @@ enabled-worlds:
   - all
 
 # Customize the messages that are sent by the plugin:
+NOT-ENOUGH-MONEY: '&cYou don not have enough money!'
 NO-TARGET-SPECIFIED: '&cYou need to specify a target!'
-WORNG-WORLD-NAME: '&cThe world you specified does not exist.'
+WRONG-WORLD-NAME: '&cThe world you specified does not exist.'
 TELEPORTED-SUCCESSFULLY: '&aYou have been randomly teleported.'
 TARGET-TELEPORTED-SUCCESSFULLY: '&aYou have successfully teleported %player_name%.'
 NO-SAFE-LOCATION-FOUND: '&cCould not find a safe location. Try again.'
 ALREADY-TELEPORTING: '&cYou are already being teleported!'
 ALREADY-TELEPORTING-TARGET: '&cPlayer is already being teleported!'
 WARMUP: '&7You will be teleported soon. Do not move!'
-NO-PERMISSION: '&cYou don''t have permission to do that.'
+NO-PERMISSION: '&cYou don not have permission to do that.'
 CONFIG-WORLDS-WRONG: '&cAll worlds listed in config.yml are wrong.'
 CONFIG-RELOAD: '&cConfiguration reloaded.'
 

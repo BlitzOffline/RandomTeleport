@@ -6,8 +6,6 @@ import com.blitzoffline.randomteleport.commands.WorldCommand
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.loadConfig
-import com.blitzoffline.randomteleport.config.loadMessages
-import com.blitzoffline.randomteleport.config.messages
 import com.blitzoffline.randomteleport.config.settings
 import com.blitzoffline.randomteleport.config.setupEconomy
 import com.blitzoffline.randomteleport.listeners.DamageListener
@@ -32,6 +30,8 @@ class RandomTeleport : JavaPlugin() {
     private lateinit var commandManager: CommandManager
 
     override fun onEnable() {
+        adventure = BukkitAudiences.create(this)
+
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig")
         } catch (ignored: ClassNotFoundException) {
@@ -39,7 +39,6 @@ class RandomTeleport : JavaPlugin() {
         }
 
         loadConfig(this)
-        loadMessages(this)
 
         dependenciesHook("PlaceholderAPI")
         if (settings[Settings.HOOK_WG]) dependenciesHook("WorldGuard")
@@ -51,13 +50,12 @@ class RandomTeleport : JavaPlugin() {
             InteractListener(),
             MoveListener()
         )
-        adventure = BukkitAudiences.create(this)
         commandManager = CommandManager(this, true)
-        registerMessage("cmd.no.permission") { sender -> messages[Messages.NO_PERMISSION].msg(sender) }
+        registerMessage("cmd.no.permission") { sender -> settings[Messages.NO_PERMISSION].msg(sender) }
         registerCompletion("#worlds") { Bukkit.getWorlds().map(World::getName) }
         registerCommands(
             MainCommand(this),
-            ReloadCommand(this),
+            ReloadCommand(),
             WorldCommand(this)
         )
 
@@ -66,11 +64,6 @@ class RandomTeleport : JavaPlugin() {
     }
 
     override fun onDisable() { "[RandomTeleport] Plugin disabled successfully!".log() }
-
-    fun reload() {
-        settings.reload()
-        messages.reload()
-    }
 
     private fun dependenciesHook(plugin: String) {
         if (plugin == "Vault") {

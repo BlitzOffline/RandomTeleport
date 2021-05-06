@@ -1,7 +1,7 @@
 package com.blitzoffline.randomteleport.listeners
 
 import com.blitzoffline.randomteleport.config.holder.Messages
-import com.blitzoffline.randomteleport.config.messages
+import com.blitzoffline.randomteleport.config.settings
 import com.blitzoffline.randomteleport.cooldown.tasks
 import com.blitzoffline.randomteleport.cooldown.warmupsStarted
 import com.blitzoffline.randomteleport.util.msg
@@ -20,7 +20,7 @@ class InteractListener : Listener {
         tasks[player.uniqueId]?.cancel()
         tasks.remove(player.uniqueId)
         warmupsStarted.remove(player.uniqueId)
-        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.BROKE_A_BLOCK]).msg(player)
+        settings[Messages.TELEPORT_CANCELED].replace("%reason%", settings[Messages.BROKE_A_BLOCK]).msg(player)
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -31,7 +31,7 @@ class InteractListener : Listener {
         tasks[player.uniqueId]?.cancel()
         tasks.remove(player.uniqueId)
         warmupsStarted.remove(player.uniqueId)
-        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.PLACED_A_BLOCK]).msg(player)
+        settings[Messages.TELEPORT_CANCELED].replace("%reason%", settings[Messages.PLACED_A_BLOCK]).msg(player)
     }
 
 }

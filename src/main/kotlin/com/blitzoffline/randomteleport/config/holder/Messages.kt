@@ -6,7 +6,7 @@ import me.mattstudios.config.properties.Property
 
 object Messages : SettingsHolder {
     @Path("NOT-ENOUGH-MONEY")
-    val NOT_ENOUGH_MONEY = Property.create("&cYou don't have enough money!")
+    val NOT_ENOUGH_MONEY = Property.create("&cYou don not have enough money!")
 
     @Path("NO-TARGET-SPECIFIED")
     val NO_TARGET_SPECIFIED = Property.create("&cYou need to specify a target!")
@@ -33,7 +33,7 @@ object Messages : SettingsHolder {
     val WARMUP = Property.create("&7You will be teleported soon. Do not move!")
 
     @Path("NO-PERMISSION")
-    val NO_PERMISSION = Property.create("&cYou don''t have permission to do that.")
+    val NO_PERMISSION = Property.create("&cYou don not have permission to do that.")
 
     @Path("CONFIG-WORLDS-WRONG")
     val CONFIG_WORLDS_WRONG = Property.create("&cAll worlds listed in config.yml are wrong.")

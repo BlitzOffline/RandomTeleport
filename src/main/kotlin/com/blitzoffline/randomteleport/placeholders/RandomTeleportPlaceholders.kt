@@ -39,7 +39,7 @@ class RandomTeleportPlaceholders(private val plugin: RandomTeleport) : Placehold
                         val savedCooldown = cooldowns[player.uniqueId] ?: return "0"
                         if (cooldown <= 0L) return "0"
                         val currTime = System.currentTimeMillis()
-                        return if (currTime - cooldown < savedCooldown) "${cooldown - (currTime - savedCooldown)}"
+                        return if (currTime - cooldown < savedCooldown) "${(cooldown - (currTime - savedCooldown)) / 1000}"
                         else "0"
                     }
                     "enabled" -> {
