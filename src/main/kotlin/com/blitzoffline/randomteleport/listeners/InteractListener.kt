@@ -13,8 +13,7 @@ import org.bukkit.event.block.BlockPlaceEvent
 class InteractListener : Listener {
 
     @EventHandler(ignoreCancelled = true)
-    fun onPlayerBlockBreak(event: BlockBreakEvent) {
-        val player = event.player
+    fun BlockBreakEvent.onPlayerBlockBreak() {
         if (tasks[player.uniqueId] == null) return
 
         tasks[player.uniqueId]?.cancel()
@@ -24,8 +23,7 @@ class InteractListener : Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    fun onPlayerBlockPlace(event: BlockPlaceEvent) {
-        val player = event.player
+    fun BlockPlaceEvent.onPlayerBlockPlace() {
         if (tasks[player.uniqueId] == null) return
 
         tasks[player.uniqueId]?.cancel()

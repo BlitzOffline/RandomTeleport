@@ -14,8 +14,8 @@ import org.bukkit.event.entity.EntityDamageEvent
 class DamageListener : Listener {
 
     @EventHandler(ignoreCancelled = true)
-    fun playerDamaged(event: EntityDamageEvent) {
-        val player = event.entity
+    fun EntityDamageEvent.playerDamaged() {
+        val player = entity
         if (player !is Player) return
         if (tasks[player.uniqueId] == null) return
 
@@ -26,8 +26,8 @@ class DamageListener : Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    fun onPlayerHit(event: EntityDamageByEntityEvent) {
-        val attacker = event.damager
+    fun EntityDamageByEntityEvent.onPlayerHit() {
+        val attacker = damager
         if (attacker !is Player) return
         if (tasks[attacker.uniqueId] == null) return
 

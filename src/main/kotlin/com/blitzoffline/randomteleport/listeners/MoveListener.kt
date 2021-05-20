@@ -12,11 +12,8 @@ import org.bukkit.event.player.PlayerMoveEvent
 class MoveListener : Listener {
 
     @EventHandler(ignoreCancelled = true)
-    fun playerMove(event: PlayerMoveEvent) {
-        val player = event.player
-        val startingLocation = event.from
-        val finalLocation = event.to
-        val distanceSquared = startingLocation.distanceSquared(finalLocation)
+    fun PlayerMoveEvent.playerMove() {
+        val distanceSquared = from.distanceSquared(to)
         if (distanceSquared < 0.05) return
         if (tasks[player.uniqueId] == null) return
 
