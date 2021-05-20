@@ -68,12 +68,7 @@ class MainCommand(private val plugin: RandomTeleport) : CommandBase() {
         }
 
         val worldNames = if(settings[Settings.ENABLED_WORLDS].contains("all")) Bukkit.getWorlds().map(World::getName) else settings[Settings.ENABLED_WORLDS]
-        val worlds = mutableListOf<World>()
-
-        for (worldName in worldNames) {
-            val world = Bukkit.getWorld(worldName) ?: continue
-            worlds.add(world)
-        }
+        val worlds = worldNames.mapNotNull { Bukkit.getWorld(it) }
 
         if (worlds.isEmpty()) {
             settings[Messages.CONFIG_WORLDS_WRONG].msg(player)
