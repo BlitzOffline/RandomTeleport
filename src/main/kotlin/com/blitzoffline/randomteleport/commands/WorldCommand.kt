@@ -55,10 +55,7 @@ class WorldCommand(private val plugin: RandomTeleport) : CommandBase() {
             else return PlaceholderAPI.setPlaceholders(player, settings[Messages.ALREADY_TELEPORTING_TARGET]).msg(sender)
         }
 
-        val teleportWorld = Bukkit.getWorld(worldName)
-        if (teleportWorld == null) {
-            return settings[Messages.WRONG_WORLD_NAME].msg(sender)
-        }
+        val teleportWorld = Bukkit.getWorld(worldName) ?: return settings[Messages.WRONG_WORLD_NAME].msg(sender)
 
         if (player.isInCooldown()) {
             if (target == null) settings[Messages.COOLDOWN_REMAINING].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}").msg(player)
