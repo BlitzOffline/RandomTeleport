@@ -6,11 +6,7 @@ import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.settings
 import com.blitzoffline.randomteleport.cooldown.*
-import com.blitzoffline.randomteleport.util.getRandomLocation
-import com.blitzoffline.randomteleport.util.isSafe
-import com.blitzoffline.randomteleport.util.msg
-import com.blitzoffline.randomteleport.util.teleportAsync
-import me.clip.placeholderapi.PlaceholderAPI
+import com.blitzoffline.randomteleport.util.*
 import me.mattstudios.mf.annotations.Alias
 import me.mattstudios.mf.annotations.Command
 import me.mattstudios.mf.annotations.Completion
@@ -22,7 +18,6 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerTeleportEvent
 
 @Command("randomteleport")
 @Alias("rtp", "wild")
@@ -53,7 +48,7 @@ class MainCommand(private val plugin: RandomTeleport) : CommandBase() {
 
         if (warmupsStarted.contains(player.uniqueId) && !player.hasPermission("randomteleport.warmup.bypass")) {
             if (player == sender) settings[Messages.ALREADY_TELEPORTING].msg(player)
-            else return PlaceholderAPI.setPlaceholders(player, settings[Messages.ALREADY_TELEPORTING_TARGET]).msg(sender)
+            else return settings[Messages.ALREADY_TELEPORTING_TARGET].parsePAPI(player).msg(sender)
         }
 
         val worldNames = if(settings[Settings.ENABLED_WORLDS].contains("all")) Bukkit.getWorlds().map(World::getName) else settings[Settings.ENABLED_WORLDS]
