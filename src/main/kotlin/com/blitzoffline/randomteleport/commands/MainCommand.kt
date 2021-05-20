@@ -5,10 +5,7 @@ import com.blitzoffline.randomteleport.config.econ
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.settings
-import com.blitzoffline.randomteleport.cooldown.cooldowns
-import com.blitzoffline.randomteleport.cooldown.isInCooldown
-import com.blitzoffline.randomteleport.cooldown.tasks
-import com.blitzoffline.randomteleport.cooldown.warmupsStarted
+import com.blitzoffline.randomteleport.cooldown.*
 import com.blitzoffline.randomteleport.util.getRandomLocation
 import com.blitzoffline.randomteleport.util.isSafe
 import com.blitzoffline.randomteleport.util.msg
@@ -51,10 +48,7 @@ class MainCommand(private val plugin: RandomTeleport) : CommandBase() {
             return settings[Messages.NOT_ENOUGH_MONEY].msg(sender)
         }
 
-        if (player.isInCooldown()) {
-            if (target == null) settings[Messages.COOLDOWN_REMAINING].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}").msg(player)
-            else return PlaceholderAPI.setPlaceholders(target, settings[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}")).msg(sender)
-        }
+        cooldownCheck(player, target, sender)
 
         if (warmupsStarted.contains(player.uniqueId) && !player.hasPermission("randomteleport.warmup.bypass")) {
             if (player == sender) settings[Messages.ALREADY_TELEPORTING].msg(player)
