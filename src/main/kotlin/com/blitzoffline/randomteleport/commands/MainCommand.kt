@@ -34,45 +34,38 @@ class MainCommand(private val plugin: RandomTeleport) : CommandBase() {
         val startTime = System.currentTimeMillis()
 
         if (target == null && sender !is Player) {
-            settings[Messages.NO_TARGET_SPECIFIED].msg(sender)
-            return
+            return settings[Messages.NO_TARGET_SPECIFIED].msg(sender)
         }
 
         val player = target ?: sender as Player
 
         if (target == null && !player.hasPermission("randomteleport.self")) {
-            settings[Messages.NO_PERMISSION].msg(player)
-            return
+            return settings[Messages.NO_PERMISSION].msg(player)
         }
 
         if (target != null && !sender.hasPermission("randomteleport.others")) {
-            settings[Messages.NO_PERMISSION].msg(sender)
-            return
+            return settings[Messages.NO_PERMISSION].msg(sender)
         }
 
         if (sender is Player && settings[Settings.HOOK_VAULT] && settings[Settings.TELEPORT_PRICE] > 0 && econ.getBalance(sender) < settings[Settings.TELEPORT_PRICE] && !player.hasPermission("randomteleport.cost.bypass")) {
-            settings[Messages.NOT_ENOUGH_MONEY].msg(sender)
-            return
+            return settings[Messages.NOT_ENOUGH_MONEY].msg(sender)
         }
 
         if (player.isInCooldown()) {
             if (target == null) settings[Messages.COOLDOWN_REMAINING].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}").msg(player)
-            else PlaceholderAPI.setPlaceholders(target, settings[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}")).msg(sender)
-            return
+            else return PlaceholderAPI.setPlaceholders(target, settings[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", "${settings[Settings.COOLDOWN] - ((System.currentTimeMillis() - cooldowns[player.uniqueId]!!) / 1000)}")).msg(sender)
         }
 
         if (warmupsStarted.contains(player.uniqueId) && !player.hasPermission("randomteleport.warmup.bypass")) {
             if (player == sender) settings[Messages.ALREADY_TELEPORTING].msg(player)
-            else PlaceholderAPI.setPlaceholders(player, settings[Messages.ALREADY_TELEPORTING_TARGET]).msg(sender)
-            return
+            else return PlaceholderAPI.setPlaceholders(player, settings[Messages.ALREADY_TELEPORTING_TARGET]).msg(sender)
         }
 
         val worldNames = if(settings[Settings.ENABLED_WORLDS].contains("all")) Bukkit.getWorlds().map(World::getName) else settings[Settings.ENABLED_WORLDS]
         val worlds = worldNames.mapNotNull { Bukkit.getWorld(it) }
 
         if (worlds.isEmpty()) {
-            settings[Messages.CONFIG_WORLDS_WRONG].msg(player)
-            return
+            return settings[Messages.CONFIG_WORLDS_WRONG].msg(player)
         }
 
         val teleportWorld = worlds.shuffled()[0]
@@ -87,8 +80,7 @@ class MainCommand(private val plugin: RandomTeleport) : CommandBase() {
         }
 
         if (!ok) {
-            settings[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
-            return
+            return settings[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
         }
 
         val newLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
