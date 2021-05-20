@@ -9,6 +9,7 @@ import com.blitzoffline.randomteleport.cooldown.*
 import com.blitzoffline.randomteleport.util.getRandomLocation
 import com.blitzoffline.randomteleport.util.isSafe
 import com.blitzoffline.randomteleport.util.msg
+import com.blitzoffline.randomteleport.util.teleportAsync
 import me.clip.placeholderapi.PlaceholderAPI
 import me.mattstudios.mf.annotations.Alias
 import me.mattstudios.mf.annotations.Command
@@ -87,31 +88,13 @@ class MainCommand(private val plugin: RandomTeleport) : CommandBase() {
                 tasks[player.uniqueId] = Bukkit.getScheduler().runTaskLater(
                     plugin,
                     Runnable {
-                        newLocation.world.getChunkAtAsync(newLocation).thenAccept {
-                            player.teleportAsync(newLocation, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept {
-                                warmupsStarted.remove(player.uniqueId)
-                                if (settings[Settings.TELEPORT_PRICE] > 0 && sender is Player && !sender.hasPermission("randomteleport.cost.bypass")) econ.withdrawPlayer(sender, settings[Settings.TELEPORT_PRICE].toDouble())
-                                if (settings[Settings.COOLDOWN] > 0) cooldowns[player.uniqueId] = System.currentTimeMillis()
-                                if (target != null) PlaceholderAPI.setPlaceholders(target, settings[Messages.TARGET_TELEPORTED_SUCCESSFULLY]).msg(sender)
-                                settings[Messages.TELEPORTED_SUCCESSFULLY].msg(player)
-                            }
-                        }
-                        tasks.remove(player.uniqueId)
+                        teleportAsync(sender, player, target, newLocation)
                     }, 20 * warmupTime
                 )
                 return
             }
         }
 
-        newLocation.world.getChunkAtAsync(newLocation).thenAccept {
-            player.teleportAsync(newLocation, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept {
-                warmupsStarted.remove(player.uniqueId)
-                if (settings[Settings.TELEPORT_PRICE] > 0 && sender is Player && !sender.hasPermission("randomteleport.cost.bypass")) econ.withdrawPlayer(sender, settings[Settings.TELEPORT_PRICE].toDouble())
-                if (settings[Settings.COOLDOWN] > 0) cooldowns[player.uniqueId] = System.currentTimeMillis()
-                if (target != null) PlaceholderAPI.setPlaceholders(target, settings[Messages.TARGET_TELEPORTED_SUCCESSFULLY]).msg(sender)
-                settings[Messages.TELEPORTED_SUCCESSFULLY].msg(player)
-            }
-        }
-        tasks.remove(player.uniqueId)
+        teleportAsync(sender, player, target, newLocation)
     }
 }
