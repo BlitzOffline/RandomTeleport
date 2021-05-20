@@ -73,8 +73,7 @@ class WorldCommand(private val plugin: RandomTeleport) : CommandBase() {
         }
 
         if (!ok) {
-            settings[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
-            return
+            return settings[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
         }
 
         val newLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
