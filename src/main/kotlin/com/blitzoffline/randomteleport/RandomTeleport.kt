@@ -54,9 +54,9 @@ class RandomTeleport : JavaPlugin() {
         cooldownHandler = CooldownHandler(this)
 
         registerListeners(
-            DamageListener(),
-            InteractListener(),
-            MoveListener()
+            DamageListener(this),
+            InteractListener(this),
+            MoveListener(this)
         )
 
         commandManager = CommandManager(this, true)
