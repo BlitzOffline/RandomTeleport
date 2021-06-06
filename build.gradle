@@ -1,8 +1,8 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.32'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 group 'com.blitzoffline'
@@ -52,13 +52,11 @@ shadowJar {
     relocate 'me.mattstudios.mf', 'com.blitzoffline.randomteleport.libs.mf'
     relocate 'me.mattstudios.config', 'com.blitzoffline.randomteleport.libs.mfconf'
     relocate 'net.kyori', 'com.blitzoffline.randomteleport.libs.adventure'
-    relocate 'org.intellij', 'com.blitzoffline.randomteleport.libs.jetbrains'
-    relocate 'org.jetbrains', 'com.blitzoffline.randomteleport.libs.jetbrains'
-    relocate 'org.yaml.snakeyaml', 'com.blitzoffline.randomteleport.libs.yaml'
     archiveFileName.set("RandomTeleport-${project.version}.jar")
 }
 
 compileKotlin {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_11
     kotlinOptions.javaParameters = true
+    processResources.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
