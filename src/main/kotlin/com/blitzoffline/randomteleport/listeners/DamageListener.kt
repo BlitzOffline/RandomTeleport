@@ -14,25 +14,23 @@ class DamageListener(private val plugin: RandomTeleport) : Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun EntityDamageEvent.playerDamaged() {
-        val player = entity
-        if (player !is Player) return
-        if (plugin.cooldownHandler.tasks[player.uniqueId] == null) return
+        if (entity !is Player) return
+        if (plugin.cooldownHandler.tasks[entity.uniqueId] == null) return
 
-        plugin.cooldownHandler.tasks[player.uniqueId]?.cancel()
-        plugin.cooldownHandler.tasks.remove(player.uniqueId)
-        plugin.cooldownHandler.warmupsStarted.remove(player.uniqueId)
-        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.GOT_HURT]).msg(player)
+        plugin.cooldownHandler.tasks[entity.uniqueId]?.cancel()
+        plugin.cooldownHandler.tasks.remove(entity.uniqueId)
+        plugin.cooldownHandler.warmups.remove(entity.uniqueId)
+        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.GOT_HURT]).msg(entity)
     }
 
     @EventHandler(ignoreCancelled = true)
     fun EntityDamageByEntityEvent.onPlayerHit() {
-        val attacker = damager
-        if (attacker !is Player) return
-        if (plugin.cooldownHandler.tasks[attacker.uniqueId] == null) return
+        if (damager !is Player) return
+        if (plugin.cooldownHandler.tasks[damager.uniqueId] == null) return
 
-        plugin.cooldownHandler.tasks[attacker.uniqueId]?.cancel()
-        plugin.cooldownHandler.tasks.remove(attacker.uniqueId)
-        plugin.cooldownHandler.warmupsStarted.remove(attacker.uniqueId)
-        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.HURT]).msg(attacker)
+        plugin.cooldownHandler.tasks[damager.uniqueId]?.cancel()
+        plugin.cooldownHandler.tasks.remove(damager.uniqueId)
+        plugin.cooldownHandler.warmups.remove(damager.uniqueId)
+        messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.HURT]).msg(damager)
     }
 }

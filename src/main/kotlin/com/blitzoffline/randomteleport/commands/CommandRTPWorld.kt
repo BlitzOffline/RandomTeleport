@@ -16,6 +16,7 @@ import me.mattstudios.mf.annotations.SubCommand
 import me.mattstudios.mf.base.CommandBase
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -26,7 +27,7 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
     private val messages = plugin.messages
 
     @SubCommand("world")
-    fun randomTeleportWorld(sender: CommandSender, @Completion("#worlds") worldName: String, @Completion("#players") @Optional target: Player?) {
+    fun randomTeleportWorld(sender: CommandSender, @Completion("#worlds") teleportWorld: World, @Completion("#players") @Optional target: Player?) {
         val startTime = System.currentTimeMillis()
 
         if (target == null && sender !is Player) {
@@ -35,7 +36,7 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
 
         val player = target ?: sender as Player
 
-        if (target == null && !player.hasPermission("randomteleport.world") && !player.hasPermission("randomteleport.world.${worldName.lowercase()}")) {
+        if (target == null && !player.hasPermission("randomteleport.world") && !player.hasPermission("randomteleport.world.${teleportWorld.name.lowercase()}")) {
             return messages[Messages.NO_PERMISSION].msg(player)
         }
 
@@ -47,17 +48,14 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
             return messages[Messages.NOT_ENOUGH_MONEY].msg(sender)
         }
 
-        if (plugin.cooldownHandler.warmupsStarted.contains(player.uniqueId) && !player.hasPermission("randomteleport.warmup.bypass")) {
-            if (player == sender) messages[Messages.ALREADY_TELEPORTING].msg(player)
-            else return messages[Messages.ALREADY_TELEPORTING_TARGET].parsePAPI(player).msg(sender)
+        if (plugin.cooldownHandler.warmups.contains(player.uniqueId) && !player.hasPermission("randomteleport.warmup.bypass")) {
+            return if (player == sender) messages[Messages.ALREADY_TELEPORTING].msg(player)
+            else messages[Messages.ALREADY_TELEPORTING_TARGET].parsePAPI(player).msg(sender)
         }
-
-        val teleportWorld = Bukkit.getWorld(worldName) ?: return messages[Messages.WRONG_WORLD_NAME].msg(sender)
 
         plugin.cooldownHandler.cooldownCheck(player, target, sender)
 
         lateinit var randomLocation: Location
-
         var ok = false
         var attempts = 0
         while (!ok && attempts <= settings[Settings.MAX_ATTEMPTS]) {
@@ -70,8 +68,8 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
             return messages[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
         }
 
-        val newLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
-        plugin.cooldownHandler.warmupsStarted.add(player.uniqueId)
+        val centeredLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
+        plugin.cooldownHandler.warmups.add(player.uniqueId)
 
         if (settings[Settings.WARMUP] > 0 && !player.hasPermission("randomteleport.warmup.bypass")) {
             messages[Messages.WARMUP].msg(player)
@@ -80,12 +78,12 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
                 plugin.cooldownHandler.tasks[player.uniqueId] = Bukkit.getScheduler().runTaskLater(
                     plugin,
                     Runnable {
-                        teleportAsync(plugin, sender, player, target, newLocation)
+                        teleportAsync(plugin, sender, player, target, centeredLocation)
                     }, 20 * warmupTime
                 )
             }
         }
 
-        teleportAsync(plugin, sender, player, target, newLocation)
+        teleportAsync(plugin, sender, player, target, centeredLocation)
     }
 }

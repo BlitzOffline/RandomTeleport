@@ -50,9 +50,9 @@ class CommandRTP(private val plugin: RandomTeleport) : CommandBase() {
 
         plugin.cooldownHandler.cooldownCheck(player, target, sender)
 
-        if (plugin.cooldownHandler.warmupsStarted.contains(player.uniqueId) && !player.hasPermission("randomteleport.warmup.bypass")) {
-            if (player == sender) messages[Messages.ALREADY_TELEPORTING].msg(player)
-            else return messages[Messages.ALREADY_TELEPORTING_TARGET].parsePAPI(player).msg(sender)
+        if (plugin.cooldownHandler.inWarmup(player)) {
+            return if (player == sender) messages[Messages.ALREADY_TELEPORTING].msg(player)
+            else messages[Messages.ALREADY_TELEPORTING_TARGET].parsePAPI(player).msg(sender)
         }
 
         val worldNames = if(settings[Settings.ENABLED_WORLDS].contains("all")) Bukkit.getWorlds().map(World::getName) else settings[Settings.ENABLED_WORLDS]
@@ -62,7 +62,7 @@ class CommandRTP(private val plugin: RandomTeleport) : CommandBase() {
             return messages[Messages.CONFIG_WORLDS_WRONG].msg(player)
         }
 
-        val teleportWorld = worlds.shuffled()[0]
+        val teleportWorld = worlds.random()
 
         lateinit var randomLocation: Location
         var ok = false
@@ -77,8 +77,8 @@ class CommandRTP(private val plugin: RandomTeleport) : CommandBase() {
             return messages[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
         }
 
-        val newLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
-        plugin.cooldownHandler.warmupsStarted.add(player.uniqueId)
+        val centeredLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
+        plugin.cooldownHandler.warmups.add(player.uniqueId)
 
         if (settings[Settings.WARMUP] > 0 && !player.hasPermission("randomteleport.warmup.bypass")) {
             messages[Messages.WARMUP].msg(player)
@@ -87,13 +87,13 @@ class CommandRTP(private val plugin: RandomTeleport) : CommandBase() {
                 plugin.cooldownHandler.tasks[player.uniqueId] = Bukkit.getScheduler().runTaskLater(
                     plugin,
                     Runnable {
-                        teleportAsync(plugin, sender, player, target, newLocation)
+                        teleportAsync(plugin, sender, player, target, centeredLocation)
                     }, 20 * warmupTime
                 )
                 return
             }
         }
 
-        teleportAsync(plugin, sender, player, target, newLocation)
+        teleportAsync(plugin, sender, player, target, centeredLocation)
     }
 }

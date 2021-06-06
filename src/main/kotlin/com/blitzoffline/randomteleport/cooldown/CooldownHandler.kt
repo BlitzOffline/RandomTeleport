@@ -15,8 +15,13 @@ class CooldownHandler(plugin: RandomTeleport) {
     private val messages = plugin.messages
 
     val cooldowns = HashMap<UUID, Long>()
-    val warmupsStarted = mutableListOf<UUID>()
+    val warmups = mutableListOf<UUID>()
     val tasks = HashMap<UUID, BukkitTask>()
+
+    fun inWarmup(player: Player): Boolean {
+        if (player.hasPermission("randomteleport.warmup.bypass")) return false
+        return warmups.contains(player.uniqueId)
+    }
 
     private fun Player.isInCooldown(): Boolean {
         if (this.hasPermission("randomteleport.cooldown.bypass")) return false
@@ -33,7 +38,7 @@ class CooldownHandler(plugin: RandomTeleport) {
         if (player.isInCooldown()) {
             if (target == null) messages[Messages.COOLDOWN_REMAINING].replace("%cooldown%", replaceCooldown(player))
                 .msg(player)
-            else return messages[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", replaceCooldown(player))
+            else return messages[Messages.COOLDOWN_REMAINING_TARGET].replace("%cooldown%", replaceCooldown(target))
                 .parsePAPI(target).msg(sender)
         }
     }

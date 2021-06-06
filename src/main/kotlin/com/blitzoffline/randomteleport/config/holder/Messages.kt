@@ -11,9 +11,6 @@ object Messages : SettingsHolder {
     @Path("NO-TARGET-SPECIFIED")
     val NO_TARGET_SPECIFIED = Property.create("&cYou need to specify a target!")
 
-    @Path("WRONG-WORLD-NAME")
-    val WRONG_WORLD_NAME = Property.create("&cThe world you specified does not exist.")
-
     @Path("TELEPORTED-SUCCESSFULLY")
     val TELEPORTED_SUCCESSFULLY = Property.create("&aYou have been randomly teleported.")
 

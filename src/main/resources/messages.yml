@@ -1,7 +1,6 @@
 # Customize the messages that are sent by the plugin:
 NOT-ENOUGH-MONEY: '&cYou don not have enough money!'
 NO-TARGET-SPECIFIED: '&cYou need to specify a target!'
-WRONG-WORLD-NAME: '&cThe world you specified does not exist.'
 TELEPORTED-SUCCESSFULLY: '&aYou have been randomly teleported.'
 TARGET-TELEPORTED-SUCCESSFULLY: '&aYou have successfully teleported %player_name%.'
 NO-SAFE-LOCATION-FOUND: '&cCould not find a safe location. Try again.'

@@ -17,7 +17,7 @@ class InteractListener(private val plugin: RandomTeleport) : Listener {
 
         plugin.cooldownHandler.tasks[player.uniqueId]?.cancel()
         plugin.cooldownHandler.tasks.remove(player.uniqueId)
-        plugin.cooldownHandler.warmupsStarted.remove(player.uniqueId)
+        plugin.cooldownHandler.warmups.remove(player.uniqueId)
         messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.BROKE_A_BLOCK]).msg(player)
     }
 
@@ -27,7 +27,7 @@ class InteractListener(private val plugin: RandomTeleport) : Listener {
 
         plugin.cooldownHandler.tasks[player.uniqueId]?.cancel()
         plugin.cooldownHandler.tasks.remove(player.uniqueId)
-        plugin.cooldownHandler.warmupsStarted.remove(player.uniqueId)
+        plugin.cooldownHandler.warmups.remove(player.uniqueId)
         messages[Messages.TELEPORT_CANCELED].replace("%reason%", messages[Messages.PLACED_A_BLOCK]).msg(player)
     }
 
