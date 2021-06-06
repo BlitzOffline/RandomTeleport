@@ -30,10 +30,14 @@ class RandomTeleport : JavaPlugin() {
     private lateinit var configHandler: ConfigHandler
 
     lateinit var cooldownHandler: CooldownHandler
+        private set
 
     lateinit var settings: SettingsManager
+        private set
     lateinit var messages: SettingsManager
+        private set
     lateinit var economy: Economy
+        private set
 
     override fun onEnable() {
         try {
