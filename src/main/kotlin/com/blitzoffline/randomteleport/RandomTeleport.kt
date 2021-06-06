@@ -1,27 +1,25 @@
 package com.blitzoffline.randomteleport
 
-import com.blitzoffline.randomteleport.commands.MainCommand
-import com.blitzoffline.randomteleport.commands.ReloadCommand
-import com.blitzoffline.randomteleport.commands.WorldCommand
+import com.blitzoffline.randomteleport.commands.CommandRTP
+import com.blitzoffline.randomteleport.commands.CommandReload
+import com.blitzoffline.randomteleport.commands.CommandRTPWorld
+import com.blitzoffline.randomteleport.config.ConfigHandler
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
-import com.blitzoffline.randomteleport.config.loadConfig
-import com.blitzoffline.randomteleport.config.loadMessages
-import com.blitzoffline.randomteleport.config.settings
-import com.blitzoffline.randomteleport.config.setupEconomy
+import com.blitzoffline.randomteleport.cooldown.CooldownHandler
 import com.blitzoffline.randomteleport.listeners.DamageListener
 import com.blitzoffline.randomteleport.listeners.InteractListener
 import com.blitzoffline.randomteleport.listeners.MoveListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
-import com.blitzoffline.randomteleport.util.adventure
 import com.blitzoffline.randomteleport.util.log
 import com.blitzoffline.randomteleport.util.msg
 import com.blitzoffline.randomteleport.util.registerLandsIntegration
+import me.mattstudios.config.SettingsManager
 import me.mattstudios.mf.base.CommandBase
 import me.mattstudios.mf.base.CommandManager
 import me.mattstudios.mf.base.components.CompletionResolver
 import me.mattstudios.mf.base.components.MessageResolver
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.event.Listener
@@ -29,36 +27,45 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class RandomTeleport : JavaPlugin() {
     private lateinit var commandManager: CommandManager
+    private lateinit var configHandler: ConfigHandler
+
+    lateinit var cooldownHandler: CooldownHandler
+
+    lateinit var settings: SettingsManager
+    lateinit var messages: SettingsManager
+    lateinit var economy: Economy
 
     override fun onEnable() {
-        adventure = BukkitAudiences.create(this)
-
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig")
         } catch (ignored: ClassNotFoundException) {
             "&cTHIS PLUGIN SHOULD BE USED ON PAPER: papermc.io/download".log()
         }
 
-        loadConfig(this)
-        loadMessages(this)
+        configHandler = ConfigHandler(this)
+        settings = configHandler.loadConfig()
+        messages = configHandler.loadMessages()
 
         setupHooks("PlaceholderAPI")
         if (settings[Settings.HOOK_WG]) setupHooks("WorldGuard")
         if (settings[Settings.HOOK_VAULT]) setupHooks("Vault")
         if (settings[Settings.HOOK_LANDS]) { setupHooks("Lands"); registerLandsIntegration(this) }
 
+        cooldownHandler = CooldownHandler(this)
+
         registerListeners(
             DamageListener(),
             InteractListener(),
             MoveListener()
         )
+
         commandManager = CommandManager(this, true)
         registerMessage("cmd.no.permission") { sender -> settings[Messages.NO_PERMISSION].msg(sender) }
         registerCompletion("#worlds") { Bukkit.getWorlds().map(World::getName) }
         registerCommands(
-            MainCommand(this),
-            ReloadCommand(),
-            WorldCommand(this)
+            CommandRTP(this),
+            CommandReload(this),
+            CommandRTPWorld(this)
         )
 
         RandomTeleportPlaceholders(this).register()
@@ -67,20 +74,23 @@ class RandomTeleport : JavaPlugin() {
 
     override fun onDisable() { "[RandomTeleport] Plugin disabled successfully!".log() }
 
-    private fun setupHooks(plugin: String) {
-        if (plugin == "Vault") {
-            if (!setupEconomy()) {
+    fun setupHooks(plugin: String) {
+        when {
+            plugin == "Vault" -> {
+                economy = configHandler.loadEconomy() ?: run {
+                    "[RandomTeleport] Could not find Vault! This plugin is required".log()
+                    pluginLoader.disablePlugin(this)
+                    return
+                }
+                "&7[RandomTeleport] Successfully hooked into $plugin!".log()
+                return
+            }
+            Bukkit.getPluginManager().getPlugin(plugin) == null -> {
                 "&7[RandomTeleport] Could not find: $plugin. Plugin disabled!".log()
                 Bukkit.getPluginManager().disablePlugin(this)
             }
-            "&7[RandomTeleport] Successfully hooked into $plugin!".log()
-            return
+            else -> "&7[RandomTeleport] Successfully hooked into $plugin!".log()
         }
-        if (Bukkit.getPluginManager().getPlugin(plugin) == null) {
-            "&7[RandomTeleport] Could not find: $plugin. Plugin disabled!".log()
-            Bukkit.getPluginManager().disablePlugin(this)
-        }
-        else { "&7[RandomTeleport] Successfully hooked into $plugin!".log() }
     }
 
     private fun registerListeners(vararg listeners: Listener) = listeners.forEach { server.pluginManager.registerEvents(it, this) }

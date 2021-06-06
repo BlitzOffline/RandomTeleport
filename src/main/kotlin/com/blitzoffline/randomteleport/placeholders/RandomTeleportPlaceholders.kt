@@ -2,8 +2,6 @@ package com.blitzoffline.randomteleport.placeholders
 
 import com.blitzoffline.randomteleport.RandomTeleport
 import com.blitzoffline.randomteleport.config.holder.Settings
-import com.blitzoffline.randomteleport.config.settings
-import com.blitzoffline.randomteleport.cooldown.cooldowns
 import me.clip.placeholderapi.PlaceholderAPIPlugin
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.Bukkit
@@ -12,7 +10,9 @@ import org.bukkit.World
 
 class RandomTeleportPlaceholders(private val plugin: RandomTeleport) : PlaceholderExpansion() {
 
-    override fun getIdentifier() = plugin.description.name.toLowerCase()
+    private val settings = plugin.settings
+
+    override fun getIdentifier() = plugin.description.name.lowercase()
 
     override fun getAuthor() = plugin.description.authors[0] ?: "BlitzOffline"
 
@@ -22,7 +22,7 @@ class RandomTeleportPlaceholders(private val plugin: RandomTeleport) : Placehold
 
     override fun persist() = true
 
-    private fun Boolean.formatBoolean() = if (this) PlaceholderAPIPlugin.booleanTrue() else PlaceholderAPIPlugin.booleanFalse()
+    private fun Boolean.papiFormat() = if (this) PlaceholderAPIPlugin.booleanTrue() else PlaceholderAPIPlugin.booleanFalse()
 
     override fun onRequest(player: OfflinePlayer?, params: String): String? {
 
@@ -36,14 +36,13 @@ class RandomTeleportPlaceholders(private val plugin: RandomTeleport) : Placehold
                         if (player == null) return null
                         val p = player.player ?: return null
                         if (p.hasPermission("randomteleport.cooldown.bypass")) return "0"
-                        val savedCooldown = cooldowns[player.uniqueId] ?: return "0"
+                        val savedCooldown = plugin.cooldownHandler.cooldowns[player.uniqueId] ?: return "0"
                         if (cooldown <= 0L) return "0"
                         val currTime = System.currentTimeMillis()
-                        return if (currTime - cooldown < savedCooldown) "${(cooldown - (currTime - savedCooldown)) / 1000}"
-                        else "0"
+                        return if (currTime - cooldown < savedCooldown) "${(cooldown - (currTime - savedCooldown)) / 1000}" else "0"
                     }
                     "enabled" -> {
-                        return (cooldown > 0).formatBoolean()
+                        return (cooldown > 0).papiFormat()
                     }
                 }
             }

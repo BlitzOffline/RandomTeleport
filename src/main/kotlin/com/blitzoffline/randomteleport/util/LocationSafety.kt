@@ -2,10 +2,10 @@ package com.blitzoffline.randomteleport.util
 
 import com.blitzoffline.randomteleport.RandomTeleport
 import com.blitzoffline.randomteleport.config.holder.Settings
-import com.blitzoffline.randomteleport.config.settings
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import me.angeschossen.lands.api.integration.LandsIntegration
+import me.mattstudios.config.SettingsManager
 import org.bukkit.Location
 import org.bukkit.Material
 
@@ -28,7 +28,7 @@ private val unsafeBlocks = listOf(
 private lateinit var landsIntegration: LandsIntegration
 fun registerLandsIntegration(plugin: RandomTeleport) { landsIntegration = LandsIntegration(plugin) }
 
-fun Location.isSafe(): Boolean {
+fun Location.isSafe(settings: SettingsManager): Boolean {
     val head = this.clone().add(0.0, 1.0, 0.0)
     val ground = this.clone().subtract(0.0, 1.0, 0.0)
     if (settings[Settings.HOOK_WG]) if(ground.isInWorldGuardRegion() || this.isInWorldGuardRegion() || head.isInWorldGuardRegion()) return false
