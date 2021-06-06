@@ -6,6 +6,7 @@ import com.blitzoffline.randomteleport.commands.WorldCommand
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.config.loadConfig
+import com.blitzoffline.randomteleport.config.loadMessages
 import com.blitzoffline.randomteleport.config.settings
 import com.blitzoffline.randomteleport.config.setupEconomy
 import com.blitzoffline.randomteleport.listeners.DamageListener
@@ -39,11 +40,12 @@ class RandomTeleport : JavaPlugin() {
         }
 
         loadConfig(this)
+        loadMessages(this)
 
-        dependenciesHook("PlaceholderAPI")
-        if (settings[Settings.HOOK_WG]) dependenciesHook("WorldGuard")
-        if (settings[Settings.HOOK_VAULT]) dependenciesHook("Vault")
-        if (settings[Settings.HOOK_LANDS]) { dependenciesHook("Lands"); registerLandsIntegration(this) }
+        setupHooks("PlaceholderAPI")
+        if (settings[Settings.HOOK_WG]) setupHooks("WorldGuard")
+        if (settings[Settings.HOOK_VAULT]) setupHooks("Vault")
+        if (settings[Settings.HOOK_LANDS]) { setupHooks("Lands"); registerLandsIntegration(this) }
 
         registerListeners(
             DamageListener(),
@@ -65,7 +67,7 @@ class RandomTeleport : JavaPlugin() {
 
     override fun onDisable() { "[RandomTeleport] Plugin disabled successfully!".log() }
 
-    private fun dependenciesHook(plugin: String) {
+    private fun setupHooks(plugin: String) {
         if (plugin == "Vault") {
             if (!setupEconomy()) {
                 "&7[RandomTeleport] Could not find: $plugin. Plugin disabled!".log()
@@ -85,4 +87,9 @@ class RandomTeleport : JavaPlugin() {
     private fun registerCommands(vararg commands: CommandBase) = commands.forEach(commandManager::register)
     private fun registerCompletion(completionId: String, resolver: CompletionResolver) = commandManager.completionHandler.register(completionId, resolver)
     private fun registerMessage(messageId: String, resolver: MessageResolver) = commandManager.messageHandler.register(messageId, resolver)
+
+    fun saveDefaultMessages() {
+        if (dataFolder.resolve("messages.yml").exists()) return
+        saveResource("messages.yml", false)
+    }
 }

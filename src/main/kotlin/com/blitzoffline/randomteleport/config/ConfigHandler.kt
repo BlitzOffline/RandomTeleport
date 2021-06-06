@@ -8,6 +8,7 @@ import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
 
 lateinit var settings: SettingsManager
+lateinit var messages: SettingsManager
 lateinit var econ: Economy
 
 fun loadConfig(plugin: RandomTeleport) {
@@ -15,7 +16,16 @@ fun loadConfig(plugin: RandomTeleport) {
     if (!file.exists()) plugin.saveDefaultConfig()
     settings = SettingsManager
         .from(file)
-        .configurationData(Settings::class.java, Messages::class.java)
+        .configurationData(Settings::class.java)
+        .create()
+}
+
+fun loadMessages(plugin: RandomTeleport) {
+    val file = plugin.dataFolder.resolve("messages.yml")
+    if (!file.exists()) plugin.saveDefaultMessages()
+    messages = SettingsManager
+        .from(file)
+        .configurationData(Messages::class.java)
         .create()
 }
 

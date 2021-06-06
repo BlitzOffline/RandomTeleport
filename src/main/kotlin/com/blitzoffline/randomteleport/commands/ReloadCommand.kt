@@ -2,6 +2,7 @@ package com.blitzoffline.randomteleport.commands
 
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
+import com.blitzoffline.randomteleport.config.messages
 import com.blitzoffline.randomteleport.config.settings
 import com.blitzoffline.randomteleport.config.setupEconomy
 import com.blitzoffline.randomteleport.util.log
@@ -21,6 +22,6 @@ class ReloadCommand : CommandBase() {
     fun reload(sender: CommandSender) {
         settings.reload()
         if (settings[Settings.HOOK_VAULT]) if (setupEconomy()) "[RandomTeleport] Something went wrong while setting up the Vault hook.".log()
-        settings[Messages.CONFIG_RELOAD].msg(sender)
+        messages[Messages.CONFIG_RELOAD].msg(sender)
     }
 }
