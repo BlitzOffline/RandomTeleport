@@ -43,7 +43,7 @@ class RandomTeleport : JavaPlugin() {
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig")
         } catch (ignored: ClassNotFoundException) {
-            "&cTHIS PLUGIN SHOULD BE USED ON PAPER: papermc.io/download".log()
+            "&cTHIS PLUGIN SHOULD BE USED ON PAPERMC: papermc.io/download".log()
         }
 
         configHandler = ConfigHandler(this)
@@ -91,7 +91,7 @@ class RandomTeleport : JavaPlugin() {
             }
             Bukkit.getPluginManager().getPlugin(plugin) == null -> {
                 "&7[RandomTeleport] Could not find: $plugin. Plugin disabled!".log()
-                Bukkit.getPluginManager().disablePlugin(this)
+                pluginLoader.disablePlugin(this)
             }
             else -> "&7[RandomTeleport] Successfully hooked into $plugin!".log()
         }
