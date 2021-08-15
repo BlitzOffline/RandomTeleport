@@ -1,4 +1,4 @@
-# This is how many times the plugins checks for a safe location before stopping.
+# This is how many times the plugin checks for a safe location before stopping.
 # Keep it around 15 or lower for best performance.
 max-attempts: 15
 

@@ -18,7 +18,7 @@ class ConfigHandler(private val plugin: RandomTeleport) {
     }
 
     fun loadMessages(): SettingsManager {
-        val msgFile = plugin.dataFolder.resolve("config.yml")
+        val msgFile = plugin.dataFolder.resolve("messages.yml")
         if (!msgFile.exists()) plugin.saveDefaultMessages()
         return SettingsManager
             .from(msgFile)
