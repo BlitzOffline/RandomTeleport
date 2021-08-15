@@ -11,7 +11,6 @@ import com.blitzoffline.randomteleport.listeners.DamageListener
 import com.blitzoffline.randomteleport.listeners.InteractListener
 import com.blitzoffline.randomteleport.listeners.MoveListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
-import com.blitzoffline.randomteleport.util.log
 import com.blitzoffline.randomteleport.util.msg
 import com.blitzoffline.randomteleport.util.registerLandsIntegration
 import me.mattstudios.config.SettingsManager
@@ -43,7 +42,7 @@ class RandomTeleport : JavaPlugin() {
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig")
         } catch (ignored: ClassNotFoundException) {
-            "&cTHIS PLUGIN SHOULD BE USED ON PAPERMC: papermc.io/download".log()
+            warn("THIS PLUGIN SHOULD BE USED ON PAPERMC: papermc.io/download")
         }
 
         configHandler = ConfigHandler(this)
@@ -73,27 +72,27 @@ class RandomTeleport : JavaPlugin() {
         )
 
         RandomTeleportPlaceholders(this).register()
-        "[RandomTeleport] Plugin enabled successfully!".log()
+        log("Plugin enabled successfully!")
     }
 
-    override fun onDisable() { "[RandomTeleport] Plugin disabled successfully!".log() }
+    override fun onDisable() { log("Plugin disabled successfully!") }
 
     fun setupHooks(plugin: String) {
         when {
             plugin == "Vault" -> {
                 economy = configHandler.loadEconomy() ?: run {
-                    "[RandomTeleport] Could not find Vault! This plugin is required".log()
+                    log("Could not find Vault! This plugin is required")
                     pluginLoader.disablePlugin(this)
                     return
                 }
-                "&7[RandomTeleport] Successfully hooked into $plugin!".log()
+                log("Successfully hooked into $plugin!")
                 return
             }
             Bukkit.getPluginManager().getPlugin(plugin) == null -> {
-                "&7[RandomTeleport] Could not find: $plugin. Plugin disabled!".log()
+                log("Could not find: $plugin. Plugin disabled!")
                 pluginLoader.disablePlugin(this)
             }
-            else -> "&7[RandomTeleport] Successfully hooked into $plugin!".log()
+            else -> log("Successfully hooked into $plugin!")
         }
     }
 
@@ -101,6 +100,8 @@ class RandomTeleport : JavaPlugin() {
     private fun registerCommands(vararg commands: CommandBase) = commands.forEach(commandManager::register)
     private fun registerCompletion(completionId: String, resolver: CompletionResolver) = commandManager.completionHandler.register(completionId, resolver)
     private fun registerMessage(messageId: String, resolver: MessageResolver) = commandManager.messageHandler.register(messageId, resolver)
+    private fun warn(message: String) = logger.warning(message)
+    private fun log(message: String) = logger.info(message)
 
     fun saveDefaultMessages() {
         if (dataFolder.resolve("messages.yml").exists()) return
