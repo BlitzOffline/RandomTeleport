@@ -3,15 +3,13 @@ package com.blitzoffline.randomteleport.commands
 import com.blitzoffline.randomteleport.RandomTeleport
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
-import com.blitzoffline.randomteleport.util.getRandomLocation
-import com.blitzoffline.randomteleport.util.isSafe
 import com.blitzoffline.randomteleport.util.msg
-import com.blitzoffline.randomteleport.util.parsePAPI
 import com.blitzoffline.randomteleport.util.teleportAsync
 import me.mattstudios.mf.annotations.Alias
 import me.mattstudios.mf.annotations.Command
 import me.mattstudios.mf.annotations.Completion
 import me.mattstudios.mf.annotations.Optional
+import me.mattstudios.mf.annotations.Permission
 import me.mattstudios.mf.annotations.SubCommand
 import me.mattstudios.mf.base.CommandBase
 import org.bukkit.Bukkit
@@ -27,7 +25,9 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
     private val messages = plugin.messages
 
     @SubCommand("world")
-    fun randomTeleportWorld(sender: CommandSender, @Completion("#worlds") teleportWorld: World, @Completion("#players") @Optional target: Player?) {
+    @Permission("randomteleport.world", "randomteleport.world.others")
+    fun randomTeleportWorld(sender: CommandSender, @Completion("#worlds") teleportWorld: World?, @Completion("#players") @Optional target: Player?) {
+        if (teleportWorld == null) return sendMessage("cmd.wrong.usage", sender)
         val startTime = System.currentTimeMillis()
 
         if (target == null && sender !is Player) {
@@ -36,7 +36,7 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
 
         val player = target ?: sender as Player
 
-        if (target == null && !player.hasPermission("randomteleport.world") && !player.hasPermission("randomteleport.world.${teleportWorld.name.lowercase()}")) {
+        if (target == null && !player.hasPermission("randomteleport.world")) {
             return messages[Messages.NO_PERMISSION].msg(player)
         }
 
@@ -44,23 +44,19 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
             return messages[Messages.NO_PERMISSION].msg(sender)
         }
 
-        if (sender is Player && settings[Settings.HOOK_VAULT] && settings[Settings.TELEPORT_PRICE] > 0 && plugin.economy.getBalance(sender) < settings[Settings.TELEPORT_PRICE] && !player.hasPermission("randomteleport.cost.bypass")) {
+        if (sender is Player && plugin.hooks["Vault"] == true && settings[Settings.TELEPORT_PRICE] > 0 && plugin.economy.getBalance(sender) < settings[Settings.TELEPORT_PRICE] && !player.hasPermission("randomteleport.cost.bypass")) {
             return messages[Messages.NOT_ENOUGH_MONEY].msg(sender)
         }
 
-        if (plugin.cooldownHandler.warmups.contains(player.uniqueId) && !player.hasPermission("randomteleport.warmup.bypass")) {
-            return if (player == sender) messages[Messages.ALREADY_TELEPORTING].msg(player)
-            else messages[Messages.ALREADY_TELEPORTING_TARGET].parsePAPI(player).msg(sender)
-        }
-
-        plugin.cooldownHandler.cooldownCheck(player, target, sender)
+        if (plugin.cooldownHandler.inWarmup(player, target, sender)) return
+        if (plugin.cooldownHandler.inCooldown(player, target, sender)) return
 
         lateinit var randomLocation: Location
         var ok = false
         var attempts = 0
-        while (!ok && attempts <= settings[Settings.MAX_ATTEMPTS]) {
-            randomLocation = getRandomLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z])
-            ok = randomLocation.isSafe(settings)
+        while (!ok && attempts < settings[Settings.MAX_ATTEMPTS]) {
+            randomLocation = plugin.locationHandler.getRandomLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z])
+            ok = plugin.locationHandler.isSafe(randomLocation)
             attempts++
         }
 
@@ -69,9 +65,9 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
         }
 
         val centeredLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
-        plugin.cooldownHandler.warmups.add(player.uniqueId)
 
         if (settings[Settings.WARMUP] > 0 && !player.hasPermission("randomteleport.warmup.bypass")) {
+            plugin.cooldownHandler.warmups.add(player.uniqueId)
             messages[Messages.WARMUP].msg(player)
             val warmupTime = settings[Settings.WARMUP] - (System.currentTimeMillis()- startTime) / 1000
             if (warmupTime > 0) {
@@ -81,6 +77,7 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
                         teleportAsync(plugin, sender, player, target, centeredLocation)
                     }, 20 * warmupTime
                 )
+                return
             }
         }
 

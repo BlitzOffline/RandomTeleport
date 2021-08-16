@@ -27,7 +27,6 @@ class ConfigHandler(private val plugin: RandomTeleport) {
     }
 
     fun loadEconomy(): Economy? {
-        if (Bukkit.getServer().pluginManager.getPlugin("Vault") == null) return null
         val rsp = Bukkit.getServer().servicesManager.getRegistration(Economy::class.java) ?: return null
         return rsp.provider
     }

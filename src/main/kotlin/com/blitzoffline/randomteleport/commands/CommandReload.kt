@@ -20,7 +20,6 @@ class CommandReload(private val plugin: RandomTeleport) : CommandBase() {
     fun reload(sender: CommandSender) {
         plugin.settings.reload()
         plugin.messages.reload()
-        if (plugin.settings[Settings.HOOK_VAULT]) plugin.setupHooks("Vault")
         plugin.messages[Messages.CONFIG_RELOAD].msg(sender)
     }
 }

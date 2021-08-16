@@ -11,8 +11,8 @@ import com.blitzoffline.randomteleport.listeners.DamageListener
 import com.blitzoffline.randomteleport.listeners.InteractListener
 import com.blitzoffline.randomteleport.listeners.MoveListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
+import com.blitzoffline.randomteleport.util.LocationHandler
 import com.blitzoffline.randomteleport.util.msg
-import com.blitzoffline.randomteleport.util.registerLandsIntegration
 import me.mattstudios.config.SettingsManager
 import me.mattstudios.mf.base.CommandBase
 import me.mattstudios.mf.base.CommandManager
@@ -30,6 +30,10 @@ class RandomTeleport : JavaPlugin() {
 
     lateinit var cooldownHandler: CooldownHandler
         private set
+    lateinit var locationHandler: LocationHandler
+        private set
+
+    val hooks = mutableMapOf<String, Boolean>()
 
     lateinit var settings: SettingsManager
         private set
@@ -49,11 +53,29 @@ class RandomTeleport : JavaPlugin() {
         settings = configHandler.loadConfig()
         messages = configHandler.loadMessages()
 
-        setupHooks("PlaceholderAPI")
-        if (settings[Settings.HOOK_WG]) setupHooks("WorldGuard")
-        if (settings[Settings.HOOK_VAULT]) setupHooks("Vault")
-        if (settings[Settings.HOOK_LANDS]) { setupHooks("Lands"); registerLandsIntegration(this) }
+        locationHandler = LocationHandler(this)
 
+        "PlaceholderAPI".hook()
+        if (settings[Settings.HOOK_GD]) {
+            "GriefDefender".hook()
+            hooks["GriefDefender"] = true
+        }
+        if (settings[Settings.HOOK_WG]) {
+            "WorldGuard".hook()
+            hooks["WorldGuard"] = true
+        }
+        if (settings[Settings.HOOK_VAULT]) {
+            "Vault".hook()
+            economy = configHandler.loadEconomy() ?: return
+            hooks["Vault"] = true
+        }
+        if (settings[Settings.HOOK_LANDS]) {
+            "Lands".hook()
+            locationHandler.startLandsIntegration()
+            hooks["Lands"] = true
+        }
+
+        RandomTeleportPlaceholders(this).register()
         cooldownHandler = CooldownHandler(this)
 
         registerListeners(
@@ -63,38 +85,26 @@ class RandomTeleport : JavaPlugin() {
         )
 
         commandManager = CommandManager(this, true)
-        registerMessage("cmd.no.permission") { sender -> settings[Messages.NO_PERMISSION].msg(sender) }
+        registerMessage("cmd.no.permission") { sender -> messages[Messages.NO_PERMISSION].msg(sender) }
         registerCompletion("#worlds") { Bukkit.getWorlds().map(World::getName) }
         registerCommands(
+            CommandRTPWorld(this),
             CommandRTP(this),
-            CommandReload(this),
-            CommandRTPWorld(this)
+            CommandReload(this)
         )
 
-        RandomTeleportPlaceholders(this).register()
         log("Plugin enabled successfully!")
     }
 
-    override fun onDisable() { log("Plugin disabled successfully!") }
-
-    fun setupHooks(plugin: String) {
-        when {
-            plugin == "Vault" -> {
-                economy = configHandler.loadEconomy() ?: run {
-                    log("Could not find Vault! This plugin is required")
-                    pluginLoader.disablePlugin(this)
-                    return
-                }
-                log("Successfully hooked into $plugin!")
-                return
-            }
-            Bukkit.getPluginManager().getPlugin(plugin) == null -> {
-                log("Could not find: $plugin. Plugin disabled!")
-                pluginLoader.disablePlugin(this)
-            }
-            else -> log("Successfully hooked into $plugin!")
+    private fun String.exists() = Bukkit.getPluginManager().getPlugin(this) != null && Bukkit.getPluginManager().getPlugin(this)?.isEnabled ?: false
+    private fun String.hook() {
+        if (!this.exists()) {
+            log("Could not find $this. That plugin is required!")
+            pluginLoader.disablePlugin(this@RandomTeleport)
         }
     }
+
+    override fun onDisable() { log("Plugin disabled successfully!") }
 
     private fun registerListeners(vararg listeners: Listener) = listeners.forEach { server.pluginManager.registerEvents(it, this) }
     private fun registerCommands(vararg commands: CommandBase) = commands.forEach(commandManager::register)

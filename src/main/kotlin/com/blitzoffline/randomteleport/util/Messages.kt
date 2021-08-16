@@ -14,5 +14,5 @@ fun String.parsePAPI(player: Player): String = PlaceholderAPI.setPlaceholders(pl
 val adventure = BukkitAudiences.create(JavaPlugin.getPlugin(RandomTeleport::class.java))
 val legacySerializer = LegacyComponentSerializer.legacyAmpersand()
 
-fun String.msg(player: Player) = adventure.player(player).sendMessage(legacySerializer.deserialize(this.parsePAPI(player)))
-fun String.msg(sender: CommandSender) = adventure.sender(sender).sendMessage(legacySerializer.deserialize(this))
+fun String.msg(player: Player) = if (this != "") adventure.player(player).sendMessage(legacySerializer.deserialize(this.parsePAPI(player))) else Unit
+fun String.msg(sender: CommandSender) = if (this != "") adventure.sender(sender).sendMessage(legacySerializer.deserialize(this)) else Unit
