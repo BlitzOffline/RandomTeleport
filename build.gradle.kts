@@ -15,6 +15,7 @@ repositories {
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo.mattstudios.me/artifactory/public")
     maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.glaremasters.me/repository/towny/")
     maven("https://repo.glaremasters.me/repository/bloodshot")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
@@ -39,6 +40,8 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6")
     // GRIEFDEFENDER
     compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
+    // TownyAdvanced Towny
+    compileOnly("com.palmergames.bukkit.towny:towny:0.97.5.8")
     // PAPER
     compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
 }

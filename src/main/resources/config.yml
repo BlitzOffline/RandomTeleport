@@ -7,12 +7,14 @@ max-attempts: 15
 hooks:
   # If this hook is enabled, the plugin will not teleport players in Lands claimed by someone.
   lands: false
-  # If this is hook enabled, you can use the teleport-price option and set prices for each teleport.
-  vault: false
-  # If hook this is enabled, the plugin will not teleport players in WorldGuard regions.
-  worldguard: true
   # If this hook is enabled, the plugin will not teleport players in GriefDefender claims.
   griefdefender: false
+  # If hook this is enabled, the plugin will not teleport players in WorldGuard regions.
+  worldguard: true
+  # If this hook is enabled, the plugin will not teleport players in Towny land/towns.
+  towny: false
+  # If this is hook enabled, you can use the teleport-price option and set prices for each teleport.
+  vault: false
 
 # This option will only work if Vault hook is enabled.
 # Here you can specify the price players have to pay to use /rtp

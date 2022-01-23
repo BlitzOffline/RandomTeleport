@@ -1,21 +1,25 @@
 package com.blitzoffline.randomteleport.util
 
 import com.blitzoffline.randomteleport.RandomTeleport
+import com.griefdefender.api.Core
 import com.griefdefender.api.GriefDefender
+import com.palmergames.bukkit.towny.TownyAPI
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.WorldGuard
 import me.angeschossen.lands.api.integration.LandsIntegration
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
+import com.sk89q.worldedit.util.Location as WGLocation
 
 class LocationHandler(private val plugin: RandomTeleport) {
     fun isSafe(location: Location): Boolean {
         val head = location.clone().add(0.0, 1.0, 0.0)
         val ground = location.clone().subtract(0.0, 1.0, 0.0)
-        if (plugin.hooks["WorldGuard"] == true) if(ground.isInWorldGuardRegion() || location.isInWorldGuardRegion() || head.isInWorldGuardRegion()) return false
-        if (plugin.hooks["GriefDefender"] == true) if(ground.isInGDClaim() || location.isInGDClaim() || head.isInGDClaim()) return false
-        if (plugin.hooks["Lands"] == true) if(ground.isInLand() || location.isInLand() || head.isInLand()) return false
+        if (plugin.hooks["Lands"] == true) if (ground.isInLand() || location.isInLand() || head.isInLand()) return false
+        if (plugin.hooks["GriefDefender"] == true) if (ground.isInGDClaim() || location.isInGDClaim() || head.isInGDClaim()) return false
+        if (plugin.hooks["WorldGuard"] == true) if (ground.isInWorldGuardRegion() || location.isInWorldGuardRegion() || head.isInWorldGuardRegion()) return false
+        if (plugin.hooks["Towny"] == true) if (ground.isInTownyTown() || location.isInTownyTown() || head.isInTownyTown()) return false
         return ground.groundIsSafe() && location.bodyIsSafe() && head.bodyIsSafe()
     }
 
@@ -38,21 +42,22 @@ class LocationHandler(private val plugin: RandomTeleport) {
         return Location(world, randomX.toDouble(), randomY.toDouble(), randomZ.toDouble())
     }
 
-    private fun Location.isInWorldGuardRegion() : Boolean {
-        val weLocation = BukkitAdapter.adapt(this)
-        val container = WorldGuard.getInstance().platform.regionContainer
-
-        return container.createQuery().getApplicableRegions(weLocation).size() > 0
-    }
-
     private fun Location.isInLand() = landsIntegration.isClaimed(this)
 
-    private fun Location.isInGDClaim() = GriefDefender.getCore().getClaimAt(this) != null
+    private fun Location.isInGDClaim() = griefDefenderIntegration.getClaimAt(this) != null
+
+    private fun Location.isInWorldGuardRegion() = worldGuardIntegration.platform.regionContainer.createQuery().getApplicableRegions(this.adapt()).size() > 0
+
+    private fun Location.isInTownyTown() = !townyIntegration.isWilderness(this)
 
     private fun Location.groundIsSafe(): Boolean {
         val block = this.block
         val material = block.type
         return !block.isEmpty && !block.isLiquid && !material.isAir && !unsafeBlocks.contains(material)
+    }
+
+    private fun Location.adapt(): WGLocation {
+        return BukkitAdapter.adapt(this)
     }
 
     private fun Location.bodyIsSafe(): Boolean {
@@ -65,7 +70,22 @@ class LocationHandler(private val plugin: RandomTeleport) {
         landsIntegration = LandsIntegration(plugin)
     }
 
+    fun startGriefDefenderIntegration() {
+        griefDefenderIntegration = GriefDefender.getCore()
+    }
+
+    fun startWorldGuardIntegration() {
+        worldGuardIntegration = WorldGuard.getInstance()
+    }
+
+    fun startTownyIntegration() {
+        townyIntegration = TownyAPI.getInstance()
+    }
+
     private lateinit var landsIntegration: LandsIntegration
+    private lateinit var griefDefenderIntegration: Core
+    private lateinit var worldGuardIntegration: WorldGuard
+    private lateinit var townyIntegration: TownyAPI
     private val unsafeBlocks = listOf(
         Material.WATER,
         Material.LAVA,

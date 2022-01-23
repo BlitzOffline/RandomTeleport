@@ -38,6 +38,10 @@ object Settings : SettingsHolder {
     @Comment("If this hook is enabled, the plugin will not teleport players in GriefDefender claims.")
     val HOOK_GD = Property.create(false)
 
+    @Path("hooks.towny")
+    @Comment("If this hook is enabled, the plugin will not teleport players in Towny land/towns.")
+    val HOOK_TOWNY = Property.create(false)
+
     @Path("teleport-price")
     @Comment(
         "\n",

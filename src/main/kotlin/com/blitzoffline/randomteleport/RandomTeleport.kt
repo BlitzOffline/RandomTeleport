@@ -56,23 +56,30 @@ class RandomTeleport : JavaPlugin() {
         locationHandler = LocationHandler(this)
 
         "PlaceholderAPI".hook()
+        if (settings[Settings.HOOK_LANDS]) {
+            "Lands".hook()
+            locationHandler.startLandsIntegration()
+            hooks["Lands"] = true
+        }
         if (settings[Settings.HOOK_GD]) {
             "GriefDefender".hook()
+            locationHandler.startGriefDefenderIntegration()
             hooks["GriefDefender"] = true
         }
         if (settings[Settings.HOOK_WG]) {
             "WorldGuard".hook()
+            locationHandler.startWorldGuardIntegration()
             hooks["WorldGuard"] = true
+        }
+        if (settings[Settings.HOOK_TOWNY]) {
+            "Towny".hook()
+            locationHandler.startTownyIntegration()
+            hooks["Towny"] = true
         }
         if (settings[Settings.HOOK_VAULT]) {
             "Vault".hook()
             economy = configHandler.loadEconomy() ?: return
             hooks["Vault"] = true
-        }
-        if (settings[Settings.HOOK_LANDS]) {
-            "Lands".hook()
-            locationHandler.startLandsIntegration()
-            hooks["Lands"] = true
         }
 
         RandomTeleportPlaceholders(this).register()

@@ -2,6 +2,6 @@ name: RandomTeleport
 version: ${version}
 main: com.blitzoffline.randomteleport.RandomTeleport
 api-version: 1.13
-softdepend: [PlaceholderAPI, WorldGuard, Lands, Vault, GriefDefender]
+softdepend: [PlaceholderAPI, WorldGuard, Lands, Vault, GriefDefender, Towny]
 author: BlitzGamer_88
 website: github.com/blitzoffline
