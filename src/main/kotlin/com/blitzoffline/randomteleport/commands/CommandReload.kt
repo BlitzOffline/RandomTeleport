@@ -2,7 +2,6 @@ package com.blitzoffline.randomteleport.commands
 
 import com.blitzoffline.randomteleport.RandomTeleport
 import com.blitzoffline.randomteleport.config.holder.Messages
-import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.util.msg
 import me.mattstudios.mf.annotations.Alias
 import me.mattstudios.mf.annotations.Command

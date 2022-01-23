@@ -1,8 +1,8 @@
 package com.blitzoffline.randomteleport
 
 import com.blitzoffline.randomteleport.commands.CommandRTP
-import com.blitzoffline.randomteleport.commands.CommandReload
 import com.blitzoffline.randomteleport.commands.CommandRTPWorld
+import com.blitzoffline.randomteleport.commands.CommandReload
 import com.blitzoffline.randomteleport.config.ConfigHandler
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
