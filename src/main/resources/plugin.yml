@@ -1,5 +1,5 @@
 name: RandomTeleport
-version: @version@
+version: ${version}
 main: com.blitzoffline.randomteleport.RandomTeleport
 api-version: 1.13
 softdepend: [PlaceholderAPI, WorldGuard, Lands, Vault, GriefDefender]
