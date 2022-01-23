@@ -7,11 +7,7 @@ plugins {
 }
 
 group = "com.blitzoffline"
-version = "1.8"
-
-//processResources {
-//    filter ReplaceTokens, tokens: [version: version]
-//}
+version = "1.9-DEV"
 
 repositories {
     mavenCentral()
