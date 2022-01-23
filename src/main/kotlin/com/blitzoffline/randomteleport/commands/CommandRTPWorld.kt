@@ -4,7 +4,7 @@ import com.blitzoffline.randomteleport.RandomTeleport
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.util.msg
-import com.blitzoffline.randomteleport.util.teleportAsync
+import com.blitzoffline.randomteleport.util.teleport
 import me.mattstudios.mf.annotations.Alias
 import me.mattstudios.mf.annotations.Command
 import me.mattstudios.mf.annotations.Completion
@@ -74,13 +74,13 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : CommandBase() {
                 plugin.cooldownHandler.tasks[player.uniqueId] = Bukkit.getScheduler().runTaskLater(
                     plugin,
                     Runnable {
-                        teleportAsync(plugin, sender, player, target, centeredLocation)
+                        teleport(plugin, sender, player, target, centeredLocation)
                     }, 20 * warmupTime
                 )
                 return
             }
         }
 
-        teleportAsync(plugin, sender, player, target, centeredLocation)
+        teleport(plugin, sender, player, target, centeredLocation)
     }
 }

@@ -42,10 +42,13 @@ class RandomTeleport : JavaPlugin() {
     lateinit var economy: Economy
         private set
 
+    var isPaper = true
+
     override fun onEnable() {
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig")
         } catch (ignored: ClassNotFoundException) {
+            isPaper = false
             warn("THIS PLUGIN SHOULD BE USED ON PAPERMC: papermc.io/download")
         }
 

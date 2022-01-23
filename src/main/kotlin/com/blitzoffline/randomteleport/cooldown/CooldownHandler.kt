@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
 
-class CooldownHandler(private val plugin: RandomTeleport) {
+class CooldownHandler(plugin: RandomTeleport) {
     private val settings = plugin.settings
     private val messages = plugin.messages
 
