@@ -89,9 +89,6 @@ class RandomTeleport : JavaPlugin() {
     }
 
     fun enableHooks() {
-        "PlaceholderAPI".hook()
-        RandomTeleportPlaceholders(this).register()
-        log("Successfully hooked into PlaceholderAPI!")
         if (settings[Settings.HOOK_LANDS]) {
             "Lands".hook()
             locationHandler.startLandsIntegration()
@@ -122,6 +119,8 @@ class RandomTeleport : JavaPlugin() {
             hooks["Vault"] = true
             log("Successfully hooked into Vault!")
         }
+        RandomTeleportPlaceholders(this).register()
+        log("Successfully hooked into PlaceholderAPI!")
     }
 
     private fun String.exists() = Bukkit.getPluginManager().getPlugin(this) != null && Bukkit.getPluginManager().getPlugin(this)?.isEnabled ?: false
