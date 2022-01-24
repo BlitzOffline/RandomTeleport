@@ -47,6 +47,7 @@ class RandomTeleport : JavaPlugin() {
         private set
 
     var isPaper = true
+        private set
 
     override fun onEnable() {
         try {
