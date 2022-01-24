@@ -10,6 +10,7 @@ import com.blitzoffline.randomteleport.cooldown.CooldownHandler
 import com.blitzoffline.randomteleport.listeners.DamageListener
 import com.blitzoffline.randomteleport.listeners.InteractListener
 import com.blitzoffline.randomteleport.listeners.MoveListener
+import com.blitzoffline.randomteleport.listeners.ServerLoadListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
 import com.blitzoffline.randomteleport.util.LocationHandler
 import com.blitzoffline.randomteleport.util.msg
@@ -58,38 +59,10 @@ class RandomTeleport : JavaPlugin() {
         messages = configHandler.loadMessages()
 
         locationHandler = LocationHandler(this)
-
-        "PlaceholderAPI".hook()
-        if (settings[Settings.HOOK_LANDS]) {
-            "Lands".hook()
-            locationHandler.startLandsIntegration()
-            hooks["Lands"] = true
-        }
-        if (settings[Settings.HOOK_GD]) {
-            "GriefDefender".hook()
-            locationHandler.startGriefDefenderIntegration()
-            hooks["GriefDefender"] = true
-        }
-        if (settings[Settings.HOOK_WG]) {
-            "WorldGuard".hook()
-            locationHandler.startWorldGuardIntegration()
-            hooks["WorldGuard"] = true
-        }
-        if (settings[Settings.HOOK_TOWNY]) {
-            "Towny".hook()
-            locationHandler.startTownyIntegration()
-            hooks["Towny"] = true
-        }
-        if (settings[Settings.HOOK_VAULT]) {
-            "Vault".hook()
-            economy = configHandler.loadEconomy() ?: return
-            hooks["Vault"] = true
-        }
-
-        RandomTeleportPlaceholders(this).register()
         cooldownHandler = CooldownHandler(this)
 
         registerListeners(
+            ServerLoadListener(this),
             DamageListener(this),
             InteractListener(this),
             MoveListener(this)
@@ -111,16 +84,52 @@ class RandomTeleport : JavaPlugin() {
         log("Plugin enabled successfully!")
     }
 
+    override fun onDisable() {
+        log("Plugin disabled successfully!")
+    }
+
+    fun enableHooks() {
+        "PlaceholderAPI".hook()
+        RandomTeleportPlaceholders(this).register()
+        log("Successfully hooked into PlaceholderAPI!")
+        if (settings[Settings.HOOK_LANDS]) {
+            "Lands".hook()
+            locationHandler.startLandsIntegration()
+            hooks["Lands"] = true
+            log("Successfully hooked into Lands!")
+        }
+        if (settings[Settings.HOOK_GD]) {
+            "GriefDefender".hook()
+            locationHandler.startGriefDefenderIntegration()
+            hooks["GriefDefender"] = true
+            log("Successfully hooked into GriefDefender!")
+        }
+        if (settings[Settings.HOOK_WG]) {
+            "WorldGuard".hook()
+            locationHandler.startWorldGuardIntegration()
+            hooks["WorldGuard"] = true
+            log("Successfully hooked into WorldGuard!")
+        }
+        if (settings[Settings.HOOK_TOWNY]) {
+            "Towny".hook()
+            locationHandler.startTownyIntegration()
+            hooks["Towny"] = true
+            log("Successfully hooked into Towny!")
+        }
+        if (settings[Settings.HOOK_VAULT]) {
+            "Vault".hook()
+            economy = configHandler.loadEconomy() ?: return
+            hooks["Vault"] = true
+            log("Successfully hooked into Vault!")
+        }
+    }
+
     private fun String.exists() = Bukkit.getPluginManager().getPlugin(this) != null && Bukkit.getPluginManager().getPlugin(this)?.isEnabled ?: false
     private fun String.hook() {
         if (!this.exists()) {
             log("Could not find $this. That plugin is required!")
             pluginLoader.disablePlugin(this@RandomTeleport)
         }
-    }
-
-    override fun onDisable() {
-        log("Plugin disabled successfully!")
     }
 
 

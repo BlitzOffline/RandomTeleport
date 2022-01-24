@@ -24,11 +24,6 @@ class LocationHandler(private val plugin: RandomTeleport) {
     }
 
     fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int, maxZ: Int, maxAttempts: Int) : Location? {
-//        val queue = plugin.locations[world.name]
-//        if (queue != null && queue.isNotEmpty()) {
-//            return queue.poll()
-//        }
-
         lateinit var randomLocation: Location
         var ok = false
         var attempts = 0
