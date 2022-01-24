@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.blitzoffline"
-version = "1.9.0-DEV"
+version = "1.9.0-Release"
 
 repositories {
     mavenCentral()
