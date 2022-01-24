@@ -26,6 +26,7 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
 class RandomTeleport : JavaPlugin() {
+    private lateinit var placeholders: RandomTeleportPlaceholders
     private lateinit var commandManager: CommandManager
     private lateinit var configHandler: ConfigHandler
 
@@ -90,45 +91,62 @@ class RandomTeleport : JavaPlugin() {
 
     fun enableHooks() {
         if (settings[Settings.HOOK_LANDS]) {
-            "Lands".hook()
+            if (!hook("Lands")) {
+                return
+            }
             locationHandler.startLandsIntegration()
             hooks["Lands"] = true
             log("Successfully hooked into Lands!")
         }
         if (settings[Settings.HOOK_GD]) {
-            "GriefDefender".hook()
+            if (!hook("GriefDefender")) {
+                return
+            }
             locationHandler.startGriefDefenderIntegration()
             hooks["GriefDefender"] = true
             log("Successfully hooked into GriefDefender!")
         }
         if (settings[Settings.HOOK_WG]) {
-            "WorldGuard".hook()
+            if (!hook("WorldGuard")) {
+                return
+            }
             locationHandler.startWorldGuardIntegration()
             hooks["WorldGuard"] = true
             log("Successfully hooked into WorldGuard!")
         }
         if (settings[Settings.HOOK_TOWNY]) {
-            "Towny".hook()
+            if (!hook("Towny")) {
+                return
+            }
             locationHandler.startTownyIntegration()
             hooks["Towny"] = true
             log("Successfully hooked into Towny!")
         }
         if (settings[Settings.HOOK_VAULT]) {
-            "Vault".hook()
+            if (!hook("Vault")) {
+                return
+            }
             economy = configHandler.loadEconomy() ?: return
             hooks["Vault"] = true
             log("Successfully hooked into Vault!")
         }
-        RandomTeleportPlaceholders(this).register()
-        log("Successfully hooked into PlaceholderAPI!")
+
+        if (hook("PlaceholderAPI")) {
+            placeholders = RandomTeleportPlaceholders(this)
+            placeholders.register()
+            log("Successfully hooked into PlaceholderAPI!")
+        }
     }
 
     private fun String.exists() = Bukkit.getPluginManager().getPlugin(this) != null && Bukkit.getPluginManager().getPlugin(this)?.isEnabled ?: false
-    private fun String.hook() {
-        if (!this.exists()) {
-            log("Could not find $this. That plugin is required!")
-            pluginLoader.disablePlugin(this@RandomTeleport)
+    private fun hook(name: String): Boolean {
+        if (!name.exists()) {
+            warn("Could not find $this. Disabling RandomTeleport!")
+            warn("If you don't want RandomTeleport to hook into $name then disable the option in plugins/RandomTeleport/config.yml at hooks.${name.lowercase()}")
+            pluginLoader.disablePlugin(this)
+            return false
         }
+        return true
     }
 
 
