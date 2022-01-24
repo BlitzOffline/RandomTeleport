@@ -96,8 +96,12 @@ class RandomTeleport : JavaPlugin() {
         )
 
         commandManager = CommandManager(this, true)
-        registerMessage("cmd.no.permission") { sender -> messages[Messages.NO_PERMISSION].msg(sender) }
-        registerCompletion("#worlds") { Bukkit.getWorlds().map(World::getName) }
+        registerMessages(
+            "cmd.no.permission" to MessageResolver { sender -> messages[Messages.NO_PERMISSION].msg(sender) }
+        )
+        registerCompletions(
+            "#worlds" to CompletionResolver { Bukkit.getWorlds().map(World::getName) }
+        )
         registerCommands(
             CommandRTPWorld(this),
             CommandRTP(this),
@@ -119,10 +123,11 @@ class RandomTeleport : JavaPlugin() {
         log("Plugin disabled successfully!")
     }
 
-    private fun registerListeners(vararg listeners: Listener) = listeners.forEach { server.pluginManager.registerEvents(it, this) }
+
     private fun registerCommands(vararg commands: CommandBase) = commands.forEach(commandManager::register)
-    private fun registerCompletion(completionId: String, resolver: CompletionResolver) = commandManager.completionHandler.register(completionId, resolver)
-    private fun registerMessage(messageId: String, resolver: MessageResolver) = commandManager.messageHandler.register(messageId, resolver)
+    private fun registerMessages(vararg pairs: Pair<String, MessageResolver>) = pairs.forEach { pair -> commandManager.messageHandler.register(pair.first, pair.second) }
+    private fun registerListeners(vararg listeners: Listener) = listeners.forEach { server.pluginManager.registerEvents(it, this) }
+    private fun registerCompletions(vararg pairs: Pair<String, CompletionResolver>) = pairs.forEach { pair -> commandManager.completionHandler.register(pair.first, pair.second) }
     private fun warn(message: String) = logger.warning(message)
     private fun log(message: String) = logger.info(message)
 
