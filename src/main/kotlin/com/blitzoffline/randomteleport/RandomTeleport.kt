@@ -11,10 +11,8 @@ import com.blitzoffline.randomteleport.listeners.DamageListener
 import com.blitzoffline.randomteleport.listeners.InteractListener
 import com.blitzoffline.randomteleport.listeners.MoveListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
-import com.blitzoffline.randomteleport.tasks.GenerateTeleportLocations
 import com.blitzoffline.randomteleport.util.LocationHandler
 import com.blitzoffline.randomteleport.util.msg
-import java.util.concurrent.ArrayBlockingQueue
 import me.mattstudios.config.SettingsManager
 import me.mattstudios.mf.base.CommandBase
 import me.mattstudios.mf.base.CommandManager
@@ -22,7 +20,6 @@ import me.mattstudios.mf.base.components.CompletionResolver
 import me.mattstudios.mf.base.components.MessageResolver
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -37,7 +34,6 @@ class RandomTeleport : JavaPlugin() {
         private set
 
     val hooks = mutableMapOf<String, Boolean>()
-    val locations = hashMapOf<String, ArrayBlockingQueue<Location>>()
 
     lateinit var settings: SettingsManager
         private set
@@ -108,17 +104,6 @@ class RandomTeleport : JavaPlugin() {
             CommandReload(this)
         )
 
-        val worlds = if (settings[Settings.ENABLED_WORLDS].contains("all")) Bukkit.getWorlds() else settings[Settings.ENABLED_WORLDS].distinct().mapNotNull { Bukkit.getWorld(it) }
-        worlds.forEach { world ->
-            if (locations[world.name] != null) {
-                return@forEach
-            }
-
-            locations[world.name] = ArrayBlockingQueue(15)
-        }
-
-        GenerateTeleportLocations(this).runTaskTimerAsynchronously(this, 0, 150 * 20L)
-
         log("Plugin enabled successfully!")
     }
 
@@ -130,7 +115,9 @@ class RandomTeleport : JavaPlugin() {
         }
     }
 
-    override fun onDisable() { log("Plugin disabled successfully!") }
+    override fun onDisable() {
+        log("Plugin disabled successfully!")
+    }
 
     private fun registerListeners(vararg listeners: Listener) = listeners.forEach { server.pluginManager.registerEvents(it, this) }
     private fun registerCommands(vararg commands: CommandBase) = commands.forEach(commandManager::register)

@@ -1,7 +1,6 @@
 package com.blitzoffline.randomteleport.util
 
 import com.blitzoffline.randomteleport.RandomTeleport
-import com.blitzoffline.randomteleport.config.holder.Settings
 import com.griefdefender.api.Core
 import com.griefdefender.api.GriefDefender
 import com.palmergames.bukkit.towny.TownyAPI
@@ -25,10 +24,10 @@ class LocationHandler(private val plugin: RandomTeleport) {
     }
 
     fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int, maxZ: Int, maxAttempts: Int) : Location? {
-        val queue = plugin.locations[world.name]
-        if (queue != null && queue.isNotEmpty()) {
-            return queue.poll()
-        }
+//        val queue = plugin.locations[world.name]
+//        if (queue != null && queue.isNotEmpty()) {
+//            return queue.poll()
+//        }
 
         lateinit var randomLocation: Location
         var ok = false
