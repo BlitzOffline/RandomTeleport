@@ -56,18 +56,9 @@ class CommandRTP(private val plugin: RandomTeleport) : CommandBase() {
 
         val teleportWorld = worlds.random()
 
-        lateinit var randomLocation: Location
-        var ok = false
-        var attempts = 0
-        while (!ok && attempts < settings[Settings.MAX_ATTEMPTS]) {
-            randomLocation = plugin.locationHandler.getRandomLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z])
-            ok = plugin.locationHandler.isSafe(randomLocation)
-            attempts++
-        }
 
-        if (!ok) {
-            return messages[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
-        }
+        val randomLocation = plugin.locationHandler.getRandomLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z], settings[Settings.MAX_ATTEMPTS])
+            ?: return messages[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
 
         val centeredLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
 

@@ -1,6 +1,7 @@
 package com.blitzoffline.randomteleport.util
 
 import com.blitzoffline.randomteleport.RandomTeleport
+import com.blitzoffline.randomteleport.config.holder.Settings
 import com.griefdefender.api.Core
 import com.griefdefender.api.GriefDefender
 import com.palmergames.bukkit.towny.TownyAPI
@@ -21,6 +22,24 @@ class LocationHandler(private val plugin: RandomTeleport) {
         if (plugin.hooks["WorldGuard"] == true) if (ground.isInWorldGuardRegion() || location.isInWorldGuardRegion() || head.isInWorldGuardRegion()) return false
         if (plugin.hooks["Towny"] == true) if (ground.isInTownyTown() || location.isInTownyTown() || head.isInTownyTown()) return false
         return ground.groundIsSafe() && location.bodyIsSafe() && head.bodyIsSafe()
+    }
+
+    fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int, maxZ: Int, maxAttempts: Int) : Location? {
+        val queue = plugin.locations[world.name]
+        if (queue != null && queue.isNotEmpty()) {
+            return queue.poll()
+        }
+
+        lateinit var randomLocation: Location
+        var ok = false
+        var attempts = 0
+        while (!ok && attempts < maxAttempts) {
+            randomLocation = plugin.locationHandler.getRandomLocation(world, useBorder, maxX, maxZ)
+            ok = plugin.locationHandler.isSafe(randomLocation)
+            attempts++
+        }
+
+        return if (ok) randomLocation else null
     }
 
     fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int, maxZ: Int) : Location {
