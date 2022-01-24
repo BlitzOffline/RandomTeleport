@@ -5,6 +5,7 @@
 * [PlaceholderAPI](https://www.spigotmc.org/resources/6245/) support.
 * [WorldGuard](https://dev.bukkit.org/projects/worldguard/) support.
 * [Vault](https://www.spigotmc.org/resources/vault.34315/) support.
+* [Towny](https://github.com/TownyAdvanced/Towny) support.
 * [Lands](https://www.spigotmc.org/resources/lands-land-claim-plugin-grief-prevention-protection-gui-management-nations-wars-1-16-support.53313/) support.
 * Use world border or max coordinates.
 * Hex support (&#aaFF00).
