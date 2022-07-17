@@ -5,26 +5,25 @@ import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.util.msg
 import com.blitzoffline.randomteleport.util.teleport
-import me.mattstudios.mf.annotations.Alias
-import me.mattstudios.mf.annotations.Command
-import me.mattstudios.mf.annotations.Completion
-import me.mattstudios.mf.annotations.Default
-import me.mattstudios.mf.annotations.Optional
-import me.mattstudios.mf.annotations.Permission
-import me.mattstudios.mf.base.CommandBase
+import dev.triumphteam.cmd.bukkit.annotation.Permission
+import dev.triumphteam.cmd.core.BaseCommand
+import dev.triumphteam.cmd.core.annotation.Command
+import dev.triumphteam.cmd.core.annotation.Default
+import dev.triumphteam.cmd.core.annotation.Optional
+import dev.triumphteam.cmd.core.annotation.Requirement
+import dev.triumphteam.cmd.core.annotation.Suggestion
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-@Command("randomteleport")
-@Alias("rtp", "wild")
-class CommandRTP(private val plugin: RandomTeleport) : CommandBase() {
+@Command(value = "randomteleport", alias = ["rtp", "wild"])
+class CommandRTP(private val plugin: RandomTeleport) : BaseCommand() {
     private val settings = plugin.settings
     private val messages = plugin.messages
 
     @Default
-    @Permission("randomteleport.self", "randomteleport.others")
-    fun randomTeleport(sender: CommandSender, @Completion("#players") @Optional target: Player?) {
+    @Requirement("rtp-permissions")
+    fun randomTeleport(sender: CommandSender, @Optional target: Player?) {
         val startTime = System.currentTimeMillis()
 
         if (target == null && sender !is Player) {

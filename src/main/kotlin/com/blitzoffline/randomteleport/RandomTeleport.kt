@@ -14,20 +14,20 @@ import com.blitzoffline.randomteleport.listeners.ServerLoadListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
 import com.blitzoffline.randomteleport.util.LocationHandler
 import com.blitzoffline.randomteleport.util.msg
+import dev.triumphteam.cmd.bukkit.BukkitCommandManager
+import dev.triumphteam.cmd.bukkit.message.BukkitMessageKey
+import dev.triumphteam.cmd.core.BaseCommand
+import dev.triumphteam.cmd.core.requirement.RequirementKey
 import me.mattstudios.config.SettingsManager
-import me.mattstudios.mf.base.CommandBase
-import me.mattstudios.mf.base.CommandManager
-import me.mattstudios.mf.base.components.CompletionResolver
-import me.mattstudios.mf.base.components.MessageResolver
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit
-import org.bukkit.World
+import org.bukkit.command.CommandSender
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
 class RandomTeleport : JavaPlugin() {
     private lateinit var placeholders: RandomTeleportPlaceholders
-    private lateinit var commandManager: CommandManager
+    private lateinit var commandManager: BukkitCommandManager<CommandSender>
     private lateinit var configHandler: ConfigHandler
 
     lateinit var cooldownHandler: CooldownHandler
@@ -69,13 +69,10 @@ class RandomTeleport : JavaPlugin() {
             MoveListener(this)
         )
 
-        commandManager = CommandManager(this, true)
-        registerMessages(
-            "cmd.no.permission" to MessageResolver { sender -> messages[Messages.NO_PERMISSION].msg(sender) }
-        )
-        registerCompletions(
-            "#worlds" to CompletionResolver { Bukkit.getWorlds().map(World::getName) }
-        )
+        commandManager = BukkitCommandManager.create(this)
+        registerRequirements()
+        registerMessages()
+
         registerCommands(
             CommandRTPWorld(this),
             CommandRTP(this),
@@ -150,10 +147,23 @@ class RandomTeleport : JavaPlugin() {
     }
 
 
-    private fun registerCommands(vararg commands: CommandBase) = commands.forEach(commandManager::register)
-    private fun registerMessages(vararg pairs: Pair<String, MessageResolver>) = pairs.forEach { pair -> commandManager.messageHandler.register(pair.first, pair.second) }
-    private fun registerListeners(vararg listeners: Listener) = listeners.forEach { server.pluginManager.registerEvents(it, this) }
-    private fun registerCompletions(vararg pairs: Pair<String, CompletionResolver>) = pairs.forEach { pair -> commandManager.completionHandler.register(pair.first, pair.second) }
+    private fun registerCommands(vararg commands: BaseCommand) = commands.forEach(commandManager::registerCommand)
+    private fun registerListeners(vararg listeners: Listener): Unit = listeners.forEach { server.pluginManager.registerEvents(it, this) }
+    private fun registerRequirements() {
+        commandManager.registerRequirement(RequirementKey.of("rtp-permissions")) { sender ->
+            sender.hasPermission("randomteleport.self") || sender.hasPermission("randomteleport.others")
+        }
+
+        commandManager.registerRequirement(RequirementKey.of("rtp-world-permissions")) { sender ->
+            sender.hasPermission("randomteleport.world") || sender.hasPermission("randomteleport.world.others")
+        }
+    }
+    private fun registerMessages() {
+        commandManager.registerMessage(BukkitMessageKey.NO_PERMISSION) { sender, _ ->
+            messages[Messages.NO_PERMISSION].msg(sender)
+        }
+    }
+
     private fun warn(message: String) = logger.warning(message)
     private fun log(message: String) = logger.info(message)
 

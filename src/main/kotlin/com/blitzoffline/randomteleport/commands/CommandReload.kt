@@ -3,16 +3,14 @@ package com.blitzoffline.randomteleport.commands
 import com.blitzoffline.randomteleport.RandomTeleport
 import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.util.msg
-import me.mattstudios.mf.annotations.Alias
-import me.mattstudios.mf.annotations.Command
-import me.mattstudios.mf.annotations.Permission
-import me.mattstudios.mf.annotations.SubCommand
-import me.mattstudios.mf.base.CommandBase
+import dev.triumphteam.cmd.bukkit.annotation.Permission
+import dev.triumphteam.cmd.core.BaseCommand
+import dev.triumphteam.cmd.core.annotation.Command
+import dev.triumphteam.cmd.core.annotation.SubCommand
 import org.bukkit.command.CommandSender
 
-@Alias("rtp", "wild")
-@Command("randomteleport")
-class CommandReload(private val plugin: RandomTeleport) : CommandBase() {
+@Command(value = "randomteleport", alias = ["rtp", "wild"])
+class CommandReload(private val plugin: RandomTeleport) : BaseCommand() {
 
     @SubCommand("reload")
     @Permission("randomteleport.admin")

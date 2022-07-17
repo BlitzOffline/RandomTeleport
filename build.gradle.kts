@@ -13,7 +13,7 @@ repositories {
     mavenCentral()
     maven("https://jitpack.io")
     maven("https://maven.enginehub.org/repo/")
-    maven("https://repo.mattstudios.me/artifactory/public")
+    maven("https://repo.triumphteam.dev/snapshots/")
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://repo.glaremasters.me/repository/towny/")
     maven("https://repo.glaremasters.me/repository/bloodshot")
@@ -23,8 +23,8 @@ repositories {
 dependencies {
     // KOTLIN
     implementation(kotlin("stdlib"))
-    // MF COMMANDS
-    implementation("me.mattstudios.utils:matt-framework:1.4.6")
+    // TRIUMPH COMMANDS
+    implementation("dev.triumphteam:triumph-cmd-bukkit:2.0.0-SNAPSHOT")
     // MF CONFIG
     implementation("me.mattstudios:triumph-config:1.0.5-SNAPSHOT")
     // ADVENTURE
