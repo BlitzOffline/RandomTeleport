@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -28,22 +28,22 @@ dependencies {
     // MF CONFIG
     implementation("me.mattstudios:triumph-config:1.0.5-SNAPSHOT")
     // ADVENTURE
-    implementation("net.kyori:adventure-platform-bukkit:4.0.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.1.1")
 
     // PLACEHOLDERAPI
-    compileOnly("me.clip:placeholderapi:2.11.1")
+    compileOnly("me.clip:placeholderapi:2.11.2")
     // VAULT
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     // LANDS
-    compileOnly("com.github.angeschossen:LandsAPI:5.15.2")
+    compileOnly("com.github.angeschossen:LandsAPI:6.5.1")
     // WORLDGUARD
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
     // GRIEFDEFENDER
     compileOnly("com.griefdefender:api:2.1.0-SNAPSHOT")
     // TownyAdvanced Towny
-    compileOnly("com.palmergames.bukkit.towny:towny:0.97.5.8")
+    compileOnly("com.palmergames.bukkit.towny:towny:0.98.2.0")
     // PAPER
-    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
 }
 
 java {
