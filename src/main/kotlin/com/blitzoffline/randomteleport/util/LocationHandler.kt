@@ -1,6 +1,9 @@
 package com.blitzoffline.randomteleport.util
 
 import com.blitzoffline.randomteleport.RandomTeleport
+import com.blitzoffline.randomteleport.exception.InvalidWorldException
+import com.blitzoffline.randomteleport.world.TeleportWorld
+import com.blitzoffline.randomteleport.world.TeleportWorldLocation
 import com.griefdefender.api.Core
 import com.griefdefender.api.GriefDefender
 import com.palmergames.bukkit.towny.TownyAPI
@@ -13,6 +16,14 @@ import org.bukkit.World
 import com.sk89q.worldedit.util.Location as WGLocation
 
 class LocationHandler(private val plugin: RandomTeleport) {
+    fun isSafe(location: TeleportWorldLocation): Boolean {
+        return try {
+            isSafe(location.toBukkitLocation())
+        } catch (exception: InvalidWorldException) {
+            false
+        }
+    }
+
     fun isSafe(location: Location): Boolean {
         val head = location.clone().add(0.0, 1.0, 0.0)
         val ground = location.clone().subtract(0.0, 1.0, 0.0)
@@ -23,20 +34,50 @@ class LocationHandler(private val plugin: RandomTeleport) {
         return ground.groundIsSafe() && location.bodyIsSafe() && head.bodyIsSafe()
     }
 
-    fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int, maxZ: Int, maxAttempts: Int) : Location? {
+    fun getRandomSafeLocation(teleportWorld: TeleportWorld, maxAttempts: Int): TeleportWorldLocation? {
+        val randomLocation = getRandomSafeLocation(
+            teleportWorld.getBukkitWorld(),
+            teleportWorld.useBorder,
+            teleportWorld.minX,
+            teleportWorld.minZ,
+            teleportWorld.maxX,
+            teleportWorld.maxZ,
+            maxAttempts
+        ) ?: return null
+
+        return TeleportWorldLocation(randomLocation.x, randomLocation.y, randomLocation.y, teleportWorld.name)
+    }
+
+    fun getRandomSafeLocation(
+        world: World,
+        useBorder: Boolean,
+        minX: Int,
+        minZ: Int,
+        maxX: Int,
+        maxZ: Int,
+        maxAttempts: Int
+    ) : Location? {
         lateinit var randomLocation: Location
         var ok = false
         var attempts = 0
         while (!ok && attempts < maxAttempts) {
-            randomLocation = plugin.locationHandler.getRandomLocation(world, useBorder, maxX, maxZ)
+            randomLocation = plugin.locationHandler.getRandomSafeLocation(world, useBorder, minX, minZ, maxX, maxZ)
             ok = plugin.locationHandler.isSafe(randomLocation)
             attempts++
         }
 
-        return if (ok) randomLocation else null
+        if (!ok) return null
+        return randomLocation
     }
 
-    fun getRandomLocation(world: World, useBorder: Boolean, maxX: Int, maxZ: Int) : Location {
+    fun getRandomSafeLocation(
+        world: World,
+        useBorder: Boolean,
+        minX: Int,
+        minZ: Int,
+        maxX: Int,
+        maxZ: Int
+    ) : Location {
         val randomX: Int
         val randomZ: Int
 
@@ -49,8 +90,8 @@ class LocationHandler(private val plugin: RandomTeleport) {
             return Location(world, randomX.toDouble(), randomY.toDouble(), randomZ.toDouble())
         }
 
-        randomX = (-maxX..maxX).random()
-        randomZ = (-maxZ..maxZ).random()
+        randomX = (minX..maxX).random()
+        randomZ = (minZ..maxZ).random()
         val randomY = world.getHighestBlockYAt(randomX, randomZ)+1
         return Location(world, randomX.toDouble(), randomY.toDouble(), randomZ.toDouble())
     }

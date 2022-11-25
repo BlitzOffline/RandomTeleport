@@ -46,7 +46,7 @@ class CommandRTPWorld(private val plugin: RandomTeleport) : BaseCommand() {
         if (plugin.cooldownHandler.inWarmup(player, target, sender)) return
         if (plugin.cooldownHandler.inCooldown(player, target, sender)) return
 
-        val randomLocation = plugin.locationHandler.getRandomLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z], settings[Settings.MAX_ATTEMPTS])
+        val randomLocation = plugin.locationHandler.getRandomSafeLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z], settings[Settings.MAX_ATTEMPTS])
             ?: return messages[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
 
         val centeredLocation = randomLocation.clone().add(0.5, 0.0, 0.5)

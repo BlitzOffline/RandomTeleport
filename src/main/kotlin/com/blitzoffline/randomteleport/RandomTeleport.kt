@@ -14,6 +14,7 @@ import com.blitzoffline.randomteleport.listeners.ServerLoadListener
 import com.blitzoffline.randomteleport.placeholders.RandomTeleportPlaceholders
 import com.blitzoffline.randomteleport.util.LocationHandler
 import com.blitzoffline.randomteleport.util.msg
+import com.blitzoffline.randomteleport.world.TeleportWorldManager
 import dev.triumphteam.cmd.bukkit.BukkitCommandManager
 import dev.triumphteam.cmd.bukkit.message.BukkitMessageKey
 import dev.triumphteam.cmd.core.BaseCommand
@@ -29,6 +30,7 @@ class RandomTeleport : JavaPlugin() {
     private lateinit var placeholders: RandomTeleportPlaceholders
     private lateinit var commandManager: BukkitCommandManager<CommandSender>
     private lateinit var configHandler: ConfigHandler
+    private lateinit var teleportWorldManager: TeleportWorldManager
 
     lateinit var cooldownHandler: CooldownHandler
         private set
@@ -78,6 +80,8 @@ class RandomTeleport : JavaPlugin() {
             CommandRTP(this),
             CommandReload(this)
         )
+
+        teleportWorldManager = TeleportWorldManager()
 
         log("Plugin enabled successfully!")
     }

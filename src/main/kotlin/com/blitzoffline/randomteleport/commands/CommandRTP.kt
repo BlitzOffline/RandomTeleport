@@ -5,13 +5,11 @@ import com.blitzoffline.randomteleport.config.holder.Messages
 import com.blitzoffline.randomteleport.config.holder.Settings
 import com.blitzoffline.randomteleport.util.msg
 import com.blitzoffline.randomteleport.util.teleport
-import dev.triumphteam.cmd.bukkit.annotation.Permission
 import dev.triumphteam.cmd.core.BaseCommand
 import dev.triumphteam.cmd.core.annotation.Command
 import dev.triumphteam.cmd.core.annotation.Default
 import dev.triumphteam.cmd.core.annotation.Optional
 import dev.triumphteam.cmd.core.annotation.Requirement
-import dev.triumphteam.cmd.core.annotation.Suggestion
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -55,7 +53,7 @@ class CommandRTP(private val plugin: RandomTeleport) : BaseCommand() {
         val teleportWorld = worlds.random()
 
 
-        val randomLocation = plugin.locationHandler.getRandomLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z], settings[Settings.MAX_ATTEMPTS])
+        val randomLocation = plugin.locationHandler.getRandomSafeLocation(teleportWorld, settings[Settings.USE_BORDER], settings[Settings.MAX_X], settings[Settings.MAX_Z], settings[Settings.MAX_ATTEMPTS])
             ?: return messages[Messages.NO_SAFE_LOCATION_FOUND].msg(sender)
 
         val centeredLocation = randomLocation.clone().add(0.5, 0.0, 0.5)
